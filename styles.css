@@ -27,8 +27,7 @@ body{
   background: var(--bg);
 }
 
-/* map  */
-#map { height: 180px; }
+
 
 /* --- Layout helpers --- */
 .container{
