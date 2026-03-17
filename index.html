@@ -1,30 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- map -->
-   <title>Simple Map</title>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Art Tourism Toronto</title>
   <link rel="stylesheet" href="styles.css" />
-
-  
   <script src="script.js" defer></script>
 </head>
 
 <body class="theme-purple">
-
- 
-  <!-- map  -->
-   <div id="map"></div>
-
-     <!-- map prettier-ignore -->
-    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${
-    c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
-        ({key: "INSERT_YOUR_API_KEY", v: "weekly"});</script>
-
-  
   <header class="site-header" id="top">
     <div class="container header-grid">
       <div class="brand">
@@ -42,7 +26,6 @@
   </header>
 
   <main>
-
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-text">
@@ -55,10 +38,27 @@
           </div>
         </div>
 
-        <!--  placeholder for map -->
-        <div class="map-placeholder" role="img" aria-label="Map placeholder">
-          <p class="map-title">MAP (TBD)</p>
-          <p class="map-note">Search + filters will be added later</p>
+        <div class="map-panel">
+          <div class="map-controls">
+            <input
+              type="text"
+              id="map-search"
+              class="map-search"
+              placeholder="Search museums or exhibitions"
+              aria-label="Search museums or exhibitions"
+            />
+
+            <div class="map-filters" aria-label="Map filters">
+              <button class="map-chip active" data-map-filter="all" type="button">All</button>
+              <button class="map-chip" data-map-filter="museum" type="button">Museums</button>
+              <button class="map-chip" data-map-filter="exhibition" type="button">Exhibitions</button>
+              <button class="map-chip" data-map-filter="free" type="button">Free</button>
+              <button class="map-chip" data-map-filter="ticketed" type="button">Ticketed</button>
+            </div>
+          </div>
+
+          <div id="map" aria-label="Map of museums and exhibitions in Toronto"></div>
+          <div id="map-results" class="map-results"></div>
         </div>
       </div>
     </section>
@@ -69,19 +69,14 @@
         <div class="section-head">
           <h2 class="section-title">Upcoming Exhibitions</h2>
 
-          <!-- Filter bar -->
           <div class="filter-bar" aria-label="Filters (visual prototype)">
-            <!-- These data-filter values enable simple JS filtering -->
             <span class="chip active" data-filter="all">All</span>
             <span class="chip" data-filter="contemporary">Contemporary</span>
             <span class="chip" data-filter="installation">Installation</span>
-            <!-- Chip -->
           </div>
         </div>
 
         <div class="cards">
-
-          <!-- EVENT CARD 1 -->
           <article class="card event-card" data-type="contemporary">
             <div class="event-date">
               <span class="date-num">26</span>
@@ -96,7 +91,7 @@
                 <span class="tag">Free / Ticketed</span>
               </p>
               <p class="card-desc">Large-scale contemporary exhibitions across the city.</p>
-              <a class="btn btn-small" href="https://torontobiennial.org/">More about the event →</a>
+              <a class="btn btn-small" href="https://torontobiennial.org/" target="_blank" rel="noopener noreferrer">More about the event →</a>
             </div>
 
             <div class="event-media" aria-hidden="true">
@@ -104,7 +99,6 @@
             </div>
           </article>
 
-          <!-- EVENT CARD 2 -->
           <article class="card event-card alt" data-type="installation">
             <div class="event-date">
               <span class="date-num">12</span>
@@ -119,7 +113,7 @@
                 <span class="tag">Museum</span>
               </p>
               <p class="card-desc">Rotating installations and contemporary programming.</p>
-              <a class="btn btn-small" href="https://moca.ca/">More about the event →</a>
+              <a class="btn btn-small" href="https://moca.ca/" target="_blank" rel="noopener noreferrer">More about the event →</a>
             </div>
 
             <div class="event-media" aria-hidden="true">
@@ -127,7 +121,6 @@
             </div>
           </article>
 
-          <!-- EVENT CARD 3 -->
           <article class="card event-card" data-type="contemporary">
             <div class="event-date">
               <span class="date-num">26 - 29</span>
@@ -141,30 +134,27 @@
                 <span class="tag">Downtown</span>
                 <span class="tag">Ticketed</span>
               </p>
-              <p class="card-desc">Discover original works of art from over 200 independent artists from across Canada. Here you can meet and buy art directly from the artists and support the next generation of Canadian artists.</p>
-              <a class="btn btn-small" href="https://theartistproject.com/home/">More about the event →</a>
+              <p class="card-desc">Discover original works of art from over 200 independent artists from across Canada. Meet and buy art directly from the artists and support the next generation of Canadian artists.</p>
+              <a class="btn btn-small" href="https://theartistproject.com/home/" target="_blank" rel="noopener noreferrer">More about the event →</a>
             </div>
 
             <div class="event-media" aria-hidden="true">
               <div class="poster-placeholder">POSTER</div>
             </div>
           </article>
-
         </div>
       </div>
     </section>
 
-     <!-- list gist -->
-<div class="museum-list">
-  <script src="https://gist.github.com/Olliezzz/51a3dba66a32cae4c26920d3a6ce5ee5.js"></script>
-</div>
-    <!-- NEW: EVENT DETAIL PLACEHOLDER SECTION -->
+    <div class="museum-list">
+      <script src="https://gist.github.com/Olliezzz/51a3dba66a32cae4c26920d3a6ce5ee5.js"></script>
+    </div>
+
     <section id="event-detail" class="section">
       <div class="container">
         <h2 class="section-title">Event Detail (Placeholder)</h2>
         <p class="hero-desc">
-          This section is a placeholder for the full event page
-          
+          This section is a placeholder for the full event page.
         </p>
       </div>
     </section>
@@ -178,25 +168,25 @@
           <article class="card museum-card">
             <h3 class="card-title">AGO</h3>
             <p class="card-desc">Art Gallery of Ontario — major collections + special exhibitions.</p>
-            <a class="link" href="#">Visit info →</a>
+            <a class="link" href="https://ago.ca/" target="_blank" rel="noopener noreferrer">Visit info →</a>
           </article>
 
           <article class="card museum-card">
             <h3 class="card-title">MOCA</h3>
             <p class="card-desc">Contemporary museum in Junction Triangle.</p>
-            <a class="link" href="#">Visit info →</a>
+            <a class="link" href="https://moca.ca/" target="_blank" rel="noopener noreferrer">Visit info →</a>
           </article>
 
           <article class="card museum-card">
             <h3 class="card-title">Power Plant</h3>
             <p class="card-desc">Waterfront contemporary gallery (Harbourfront).</p>
-            <a class="link" href="#">Visit info →</a>
+            <a class="link" href="https://www.thepowerplant.org/" target="_blank" rel="noopener noreferrer">Visit info →</a>
           </article>
 
           <article class="card museum-card">
             <h3 class="card-title">The Bentway</h3>
             <p class="card-desc">Public art + programming under the Gardiner.</p>
-            <a class="link" href="#">Visit info →</a>
+            <a class="link" href="https://thebentway.ca/" target="_blank" rel="noopener noreferrer">Visit info →</a>
           </article>
         </div>
       </div>
@@ -259,10 +249,8 @@
         </form>
       </div>
     </section>
-
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <p>Art Tourism Toronto — Site in progress</p>
@@ -270,5 +258,10 @@
     </div>
   </footer>
 
+ <script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9O8A89VlcxPHMrFVQaAql7Wg7vLqZbTE&callback=initMap"
+  async
+  defer
+></script>
 </body>
 </html>
