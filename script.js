@@ -165,14 +165,18 @@ function initLeafletMap() {
   if (!mapElement || typeof L === "undefined") return;
 
   map = L.map("map", {
-    scrollWheelZoom: false,
-    zoomControl: true,
-    dragging: true,
-    touchZoom: true,
-    doubleClickZoom: true,
-    boxZoom: false,
-    keyboard: true
-  }).setView([43.6532, -79.3832], 11);
+  scrollWheelZoom: false,
+  zoomControl: false,
+  dragging: true,
+  touchZoom: true,
+  doubleClickZoom: true,
+  boxZoom: false,
+  keyboard: true
+}).setView([43.6532, -79.3832], 11);
+
+L.control.zoom({
+  position: "topleft"
+}).addTo(map);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"

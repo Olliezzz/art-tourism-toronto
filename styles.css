@@ -619,4 +619,32 @@ input, textarea{
     height: 44vh;
     min-height: 280px;
   }
+  .leaflet-top,
+.leaflet-bottom {
+  z-index: 500;
+}
+
+.leaflet-control-zoom {
+  border: 2px solid var(--ink) !important;
+  box-shadow: 6px 6px 0 rgba(18,18,34,0.9) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-bottom: 2px solid var(--ink) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--accent) !important;
+}
+
+.leaflet-control-attribution {
+  font-size: 11px;
+}
 }
