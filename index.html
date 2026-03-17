@@ -4,7 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Art Tourism Toronto</title>
+
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    defer
+  ></script>
+
   <script src="script.js" defer></script>
 </head>
 
@@ -63,13 +75,12 @@
       </div>
     </section>
 
-    <!-- EXHIBITIONS -->
     <section id="exhibitions" class="section">
       <div class="container">
         <div class="section-head">
           <h2 class="section-title">Upcoming Exhibitions</h2>
 
-          <div class="filter-bar" aria-label="Filters (visual prototype)">
+          <div class="filter-bar" aria-label="Exhibition filters">
             <span class="chip active" data-filter="all">All</span>
             <span class="chip" data-filter="contemporary">Contemporary</span>
             <span class="chip" data-filter="installation">Installation</span>
@@ -134,7 +145,10 @@
                 <span class="tag">Downtown</span>
                 <span class="tag">Ticketed</span>
               </p>
-              <p class="card-desc">Discover original works of art from over 200 independent artists from across Canada. Meet and buy art directly from the artists and support the next generation of Canadian artists.</p>
+              <p class="card-desc">
+                Discover original works of art from over 200 independent artists from across Canada.
+                Meet and buy art directly from the artists and support the next generation of Canadian artists.
+              </p>
               <a class="btn btn-small" href="https://theartistproject.com/home/" target="_blank" rel="noopener noreferrer">More about the event →</a>
             </div>
 
@@ -146,20 +160,13 @@
       </div>
     </section>
 
-    <div class="museum-list">
-      <script src="https://gist.github.com/Olliezzz/51a3dba66a32cae4c26920d3a6ce5ee5.js"></script>
-    </div>
-
     <section id="event-detail" class="section">
       <div class="container">
         <h2 class="section-title">Event Detail (Placeholder)</h2>
-        <p class="hero-desc">
-          This section is a placeholder for the full event page.
-        </p>
+        <p class="hero-desc">This section is a placeholder for the full event page.</p>
       </div>
     </section>
 
-    <!-- MUSEUMS -->
     <section id="museums" class="section section-dark">
       <div class="container">
         <h2 class="section-title">Museums Await</h2>
@@ -192,7 +199,6 @@
       </div>
     </section>
 
-    <!-- ARCHIVE -->
     <section id="archive" class="section">
       <div class="container">
         <h2 class="section-title">Archive</h2>
@@ -217,7 +223,6 @@
       </div>
     </section>
 
-    <!-- PEERS -->
     <section id="peers" class="section section-acid">
       <div class="container">
         <h2 class="section-title">Peers Chat (Prototype)</h2>
@@ -257,11 +262,5 @@
       <a class="link" href="#top">Back to top ↑</a>
     </div>
   </footer>
-
- <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9O8A89VlcxPHMrFVQaAql7Wg7vLqZbTE&callback=initMap"
-  async
-  defer
-></script>
 </body>
 </html>

@@ -1,6 +1,3 @@
-/* -----------------------------
-   EXHIBITION FILTER CHIPS
------------------------------ */
 const chips = document.querySelectorAll(".chip");
 const events = document.querySelectorAll(".event-card");
 
@@ -21,9 +18,6 @@ chips.forEach((chip) => {
   });
 });
 
-/* -----------------------------
-   HERO BUTTON SMOOTH SCROLL
------------------------------ */
 const exploreBtn = document.querySelector(".hero-actions .btn-primary");
 
 if (exploreBtn) {
@@ -35,16 +29,13 @@ if (exploreBtn) {
   });
 }
 
-/* -----------------------------
-   MAP DATA
------------------------------ */
 const places = [
   {
     name: "Art Gallery of Ontario",
     type: "museum",
     price: "ticketed",
     area: "Downtown",
-    position: { lat: 43.6536, lng: -79.3925 },
+    position: [43.6536, -79.3925],
     description: "Major collections and special exhibitions.",
     link: "https://ago.ca/"
   },
@@ -53,7 +44,7 @@ const places = [
     type: "museum",
     price: "ticketed",
     area: "Junction Triangle",
-    position: { lat: 43.6655, lng: -79.4472 },
+    position: [43.6655, -79.4472],
     description: "Contemporary museum with rotating installations.",
     link: "https://moca.ca/"
   },
@@ -62,7 +53,7 @@ const places = [
     type: "museum",
     price: "free",
     area: "Harbourfront",
-    position: { lat: 43.6388, lng: -79.3826 },
+    position: [43.6388, -79.3826],
     description: "Contemporary visual art gallery on the waterfront.",
     link: "https://www.thepowerplant.org/"
   },
@@ -71,7 +62,7 @@ const places = [
     type: "museum",
     price: "free",
     area: "Fort York",
-    position: { lat: 43.6380, lng: -79.4000 },
+    position: [43.6380, -79.4000],
     description: "Public art and programming under the Gardiner.",
     link: "https://thebentway.ca/"
   },
@@ -80,7 +71,7 @@ const places = [
     type: "exhibition",
     price: "free",
     area: "Toronto",
-    position: { lat: 43.6450, lng: -79.3950 },
+    position: [43.6450, -79.3950],
     description: "Large-scale contemporary exhibitions across the city.",
     link: "https://torontobiennial.org/"
   },
@@ -89,42 +80,34 @@ const places = [
     type: "exhibition",
     price: "ticketed",
     area: "Exhibition Place",
-    position: { lat: 43.6338, lng: -79.4187 },
+    position: [43.6338, -79.4187],
     description: "Independent artists from across Canada.",
     link: "https://theartistproject.com/home/"
   }
 ];
 
-/* -----------------------------
-   GOOGLE MAP
------------------------------ */
 let map;
-let infoWindow;
 let markers = [];
 
-function initMap() {
+function initLeafletMap() {
   const mapElement = document.getElementById("map");
-  if (!mapElement) return;
 
-  map = new google.maps.Map(mapElement, {
-    center: { lat: 43.6532, lng: -79.3832 },
-    zoom: 11,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: true
-  });
+  if (!mapElement || typeof L === "undefined") return;
 
-  infoWindow = new google.maps.InfoWindow();
+  map = L.map("map").setView([43.6532, -79.3832], 11);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
 
   setupMapUI();
   updateMapAndList(places);
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 100);
 }
 
-window.initMap = initMap;
-
-/* -----------------------------
-   MAP FILTER + SEARCH
------------------------------ */
 function setupMapUI() {
   const mapChips = document.querySelectorAll(".map-chip");
   const searchInput = document.getElementById("map-search");
@@ -166,26 +149,23 @@ function applyMapFilters() {
   updateMapAndList(filteredPlaces);
 }
 
-/* -----------------------------
-   MAP RENDERING
------------------------------ */
 function updateMapAndList(filteredPlaces) {
   clearMarkers();
   renderMapResults(filteredPlaces);
 
   if (!map) return;
 
-  const bounds = new google.maps.LatLngBounds();
+  if (filteredPlaces.length === 0) {
+    map.setView([43.6532, -79.3832], 11);
+    return;
+  }
+
+  const bounds = [];
 
   filteredPlaces.forEach((place) => {
-    const marker = new google.maps.Marker({
-      position: place.position,
-      map: map,
-      title: place.name
-    });
-
-    marker.addListener("click", () => {
-      infoWindow.setContent(`
+    const marker = L.marker(place.position)
+      .addTo(map)
+      .bindPopup(`
         <div style="max-width:220px;">
           <h3 style="margin:0 0 8px 0;">${place.name}</h3>
           <p style="margin:0 0 6px 0;"><strong>${capitalize(place.type)}</strong> · ${place.area}</p>
@@ -193,33 +173,24 @@ function updateMapAndList(filteredPlaces) {
           <a href="${place.link}" target="_blank" rel="noopener noreferrer">Visit website →</a>
         </div>
       `);
-      infoWindow.open(map, marker);
-    });
 
     markers.push(marker);
-    bounds.extend(place.position);
+    bounds.push(place.position);
   });
 
-  if (filteredPlaces.length > 0) {
-    map.fitBounds(bounds);
-
-    if (filteredPlaces.length === 1) {
-      map.setZoom(14);
-    }
+  if (bounds.length === 1) {
+    map.setView(bounds[0], 14);
   } else {
-    map.setCenter({ lat: 43.6532, lng: -79.3832 });
-    map.setZoom(11);
+    map.fitBounds(bounds, { padding: [30, 30] });
   }
 }
 
 function clearMarkers() {
-  markers.forEach((marker) => marker.setMap(null));
+  if (!map) return;
+  markers.forEach((marker) => map.removeLayer(marker));
   markers = [];
 }
 
-/* -----------------------------
-   RESULT LIST
------------------------------ */
 function renderMapResults(items) {
   const results = document.getElementById("map-results");
   if (!results) return;
@@ -244,3 +215,7 @@ function renderMapResults(items) {
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
+window.addEventListener("load", () => {
+  initLeafletMap();
+});
