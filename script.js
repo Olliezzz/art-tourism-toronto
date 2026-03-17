@@ -119,6 +119,15 @@ const places = [
     position: [43.7256, -79.3327],
     description: "Museum of Islamic art, culture, and exhibitions.",
     link: "https://agakhanmuseum.org/"
+  },
+  {
+    name: "Toronto Sculpture Garden",
+    type: "street-art",
+    price: "free",
+    area: "Bloor-Yorkville",
+    position: [43.6670, -79.3945],
+    description: "Outdoor sculpture garden with rotating exhibits.",
+    link: "https://www.torontosculpturegarden.ca/"
   }
 ];
 

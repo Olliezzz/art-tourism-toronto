@@ -647,4 +647,46 @@ input, textarea{
 .leaflet-control-attribution {
   font-size: 11px;
 }
+/* ABOUT PAGE */
+.eyebrow{
+  margin: 0 0 10px 0;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--deep);
+}
+
+.about-hero{
+  padding-top: 56px;
+}
+
+.about-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.about-features{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.about-text-block{
+  max-width: 900px;
+}
+
+.about-feature-card{
+  background: #141026;
+  color: var(--paper);
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 10px 10px 0 rgba(200,255,46,0.75);
+}
+
+@media (max-width: 900px){
+  .about-grid,
+  .about-features{
+    grid-template-columns: 1fr;
+  }
+}
 }
