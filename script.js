@@ -1,3 +1,6 @@
+/* -----------------------------
+   EXHIBITION FILTER CHIPS
+----------------------------- */
 const chips = document.querySelectorAll(".chip");
 const events = document.querySelectorAll(".event-card");
 
@@ -18,6 +21,9 @@ chips.forEach((chip) => {
   });
 });
 
+/* -----------------------------
+   HERO BUTTON SMOOTH SCROLL
+----------------------------- */
 const exploreBtn = document.querySelector(".hero-actions .btn-primary");
 
 if (exploreBtn) {
@@ -29,6 +35,9 @@ if (exploreBtn) {
   });
 }
 
+/* -----------------------------
+   MAP DATA
+----------------------------- */
 const places = [
   {
     name: "Art Gallery of Ontario",
@@ -83,12 +92,72 @@ const places = [
     position: [43.6338, -79.4187],
     description: "Independent artists from across Canada.",
     link: "https://theartistproject.com/home/"
+  },
+  {
+    name: "Royal Ontario Museum",
+    type: "museum",
+    price: "ticketed",
+    area: "Bloor-Yorkville",
+    position: [43.6677, -79.3948],
+    description: "Major museum with art, culture, and natural history collections.",
+    link: "https://www.rom.on.ca/"
+  },
+  {
+    name: "Gardiner Museum",
+    type: "museum",
+    price: "ticketed",
+    area: "Bloor-Yorkville",
+    position: [43.6680, -79.3939],
+    description: "Ceramic art museum across from the ROM.",
+    link: "https://www.gardinermuseum.on.ca/"
+  },
+  {
+    name: "Aga Khan Museum",
+    type: "museum",
+    price: "ticketed",
+    area: "North York",
+    position: [43.7256, -79.3327],
+    description: "Museum of Islamic art, culture, and exhibitions.",
+    link: "https://agakhanmuseum.org/"
   }
 ];
 
+/* -----------------------------
+   MAP STATE
+----------------------------- */
 let map;
 let markers = [];
+let currentFilteredPlaces = [];
 
+/* -----------------------------
+   CUSTOM ICONS
+----------------------------- */
+function createCustomIcon(type) {
+  return L.divIcon({
+    className: "",
+    html: `<div class="custom-marker ${type}"></div>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+    popupAnchor: [0, -10]
+  });
+}
+
+function setActiveMarker(placeName) {
+  markers.forEach((markerObj) => {
+    const markerEl = markerObj.marker.getElement()?.querySelector(".custom-marker");
+    if (!markerEl) return;
+
+    if (markerObj.place.name === placeName) {
+      markerEl.classList.add("is-active");
+    } else {
+      markerEl.classList.remove("is-active");
+    }
+  });
+}
+
+/* -----------------------------
+   INIT MAP
+----------------------------- */
 function initLeafletMap() {
   const mapElement = document.getElementById("map");
 
@@ -108,6 +177,9 @@ function initLeafletMap() {
   }, 100);
 }
 
+/* -----------------------------
+   MAP UI
+----------------------------- */
 function setupMapUI() {
   const mapChips = document.querySelectorAll(".map-chip");
   const searchInput = document.getElementById("map-search");
@@ -125,6 +197,9 @@ function setupMapUI() {
   }
 }
 
+/* -----------------------------
+   FILTERS
+----------------------------- */
 function applyMapFilters() {
   const activeChip = document.querySelector(".map-chip.active");
   const currentFilter = activeChip ? activeChip.dataset.mapFilter : "all";
@@ -146,12 +221,16 @@ function applyMapFilters() {
     return matchesFilter && matchesSearch;
   });
 
-  updateMapAndList(filteredPlaces);
+  updateMapAndList(filteredPlaces, searchTerm);
 }
 
-function updateMapAndList(filteredPlaces) {
+/* -----------------------------
+   RENDER MAP + LIST
+----------------------------- */
+function updateMapAndList(filteredPlaces, searchTerm = "") {
+  currentFilteredPlaces = filteredPlaces;
   clearMarkers();
-  renderMapResults(filteredPlaces);
+  renderMapResults(filteredPlaces, searchTerm);
 
   if (!map) return;
 
@@ -163,35 +242,51 @@ function updateMapAndList(filteredPlaces) {
   const bounds = [];
 
   filteredPlaces.forEach((place) => {
-    const marker = L.marker(place.position)
+    const marker = L.marker(place.position, {
+      icon: createCustomIcon(place.type)
+    })
       .addTo(map)
       .bindPopup(`
         <div style="max-width:220px;">
-          <h3 style="margin:0 0 8px 0;">${place.name}</h3>
-          <p style="margin:0 0 6px 0;"><strong>${capitalize(place.type)}</strong> · ${place.area}</p>
-          <p style="margin:0 0 8px 0;">${place.description}</p>
+          <h3>${place.name}</h3>
+          <p><strong>${capitalize(place.type)}</strong> · ${place.area}</p>
+          <p>${place.description}</p>
           <a href="${place.link}" target="_blank" rel="noopener noreferrer">Visit website →</a>
         </div>
       `);
 
-    markers.push(marker);
+    marker.on("click", () => {
+      highlightSelectedCard(place.name);
+      setActiveMarker(place.name);
+    });
+
+    markers.push({ marker, place });
     bounds.push(place.position);
   });
 
   if (bounds.length === 1) {
     map.setView(bounds[0], 14);
+    markers[0].marker.openPopup();
+    highlightSelectedCard(filteredPlaces[0].name);
+    setActiveMarker(filteredPlaces[0].name);
   } else {
     map.fitBounds(bounds, { padding: [30, 30] });
   }
 }
 
+/* -----------------------------
+   CLEAR MARKERS
+----------------------------- */
 function clearMarkers() {
   if (!map) return;
-  markers.forEach((marker) => map.removeLayer(marker));
+  markers.forEach((item) => map.removeLayer(item.marker));
   markers = [];
 }
 
-function renderMapResults(items) {
+/* -----------------------------
+   RESULTS LIST
+----------------------------- */
+function renderMapResults(items, searchTerm = "") {
   const results = document.getElementById("map-results");
   if (!results) return;
 
@@ -200,22 +295,81 @@ function renderMapResults(items) {
     return;
   }
 
-  results.innerHTML = items.map((item) => `
-    <article class="map-result-card">
-      <h3 class="map-result-title">${item.name}</h3>
-      <p class="map-result-meta">${capitalize(item.type)} · ${item.area} · ${capitalize(item.price)}</p>
-      <p class="map-result-desc">${item.description}</p>
-      <a class="map-result-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
-        Visit website →
-      </a>
-    </article>
-  `).join("");
+  results.innerHTML = items.map((item) => {
+    const hasSearchMatch = searchTerm.length > 0;
+    return `
+      <article class="map-result-card ${hasSearchMatch ? "is-match" : ""}" data-place-name="${item.name}">
+        <h3 class="map-result-title">${item.name}</h3>
+        <p class="map-result-meta">${capitalize(item.type)} · ${item.area} · ${capitalize(item.price)}</p>
+        <p class="map-result-desc">${item.description}</p>
+        <a class="map-result-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
+          Visit website →
+        </a>
+      </article>
+    `;
+  }).join("");
+
+  attachResultCardEvents();
 }
 
+/* -----------------------------
+   RESULT CARD EVENTS
+----------------------------- */
+function attachResultCardEvents() {
+  const cards = document.querySelectorAll(".map-result-card");
+
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const placeName = card.dataset.placeName;
+      const place = currentFilteredPlaces.find((item) => item.name === placeName);
+      const markerObj = markers.find((item) => item.place.name === placeName);
+
+      if (place && markerObj) {
+        map.setView(place.position, 14);
+        markerObj.marker.openPopup();
+        highlightSelectedCard(placeName);
+        setActiveMarker(placeName);
+      }
+    });
+
+    card.addEventListener("mouseenter", () => {
+      const placeName = card.dataset.placeName;
+      setActiveMarker(placeName);
+    });
+
+    card.addEventListener("mouseleave", () => {
+      const selectedCard = document.querySelector(".map-result-card.is-selected");
+      if (selectedCard) {
+        setActiveMarker(selectedCard.dataset.placeName);
+      } else {
+        setActiveMarker("");
+      }
+    });
+  });
+}
+
+function highlightSelectedCard(placeName) {
+  const cards = document.querySelectorAll(".map-result-card");
+
+  cards.forEach((card) => {
+    card.classList.remove("is-selected");
+    if (card.dataset.placeName === placeName) {
+      card.classList.add("is-selected");
+      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  });
+}
+
+/* -----------------------------
+   HELPERS
+----------------------------- */
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
+/* -----------------------------
+   START
+----------------------------- */
 window.addEventListener("load", () => {
   initLeafletMap();
 });
