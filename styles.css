@@ -203,6 +203,38 @@ body{
   width: 100%;
 }
 
+/*addition map */
+.map-results-wrap{
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.map-results-toggle{
+  margin-bottom: 12px;
+}
+
+.map-results{
+  display: grid;
+  gap: 12px;
+}
+
+.map-results.is-collapsed .map-result-card:nth-child(n + 4){
+  display: none;
+}
+
+.custom-marker.is-active{
+  background: var(--hot);
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px rgba(47, 232, 255, 0.28), 4px 4px 0 rgba(18,18,34,0.9);
+}
+
+.map-result-card:hover{
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 rgba(18,18,34,0.9);
+  background: #eefcff;
+}
+
 .map-result-card{
   border: 2px solid var(--ink);
   background: rgba(255,255,255,0.85);

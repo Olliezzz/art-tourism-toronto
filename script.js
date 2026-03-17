@@ -128,6 +128,7 @@ const places = [
 let map;
 let markers = [];
 let currentFilteredPlaces = [];
+let resultsExpanded = false;
 
 /* -----------------------------
    CUSTOM ICONS
@@ -163,13 +164,22 @@ function initLeafletMap() {
 
   if (!mapElement || typeof L === "undefined") return;
 
-  map = L.map("map").setView([43.6532, -79.3832], 11);
+  map = L.map("map", {
+    scrollWheelZoom: false,
+    zoomControl: true,
+    dragging: true,
+    touchZoom: true,
+    doubleClickZoom: true,
+    boxZoom: false,
+    keyboard: true
+  }).setView([43.6532, -79.3832], 11);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
   setupMapUI();
+  setupResultsToggle();
   updateMapAndList(places);
 
   setTimeout(() => {
@@ -193,7 +203,38 @@ function setupMapUI() {
   });
 
   if (searchInput) {
-    searchInput.addEventListener("input", applyMapFilters);
+    searchInput.addEventListener("input", () => {
+      resultsExpanded = false;
+      applyMapFilters();
+    });
+  }
+}
+
+function setupResultsToggle() {
+  const toggleBtn = document.getElementById("map-results-toggle");
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => {
+    resultsExpanded = !resultsExpanded;
+    updateResultsCollapseState(currentFilteredPlaces.length);
+  });
+}
+
+function updateResultsCollapseState(totalItems) {
+  const results = document.getElementById("map-results");
+  const toggleBtn = document.getElementById("map-results-toggle");
+  if (!results || !toggleBtn) return;
+
+  const shouldCollapse = totalItems > 3 && !resultsExpanded;
+
+  results.classList.toggle("is-collapsed", shouldCollapse);
+
+  if (totalItems <= 3) {
+    toggleBtn.style.display = "none";
+  } else {
+    toggleBtn.style.display = "inline-block";
+    toggleBtn.textContent = resultsExpanded ? "Show fewer places" : "See more places";
+    toggleBtn.setAttribute("aria-expanded", String(resultsExpanded));
   }
 }
 
@@ -231,11 +272,13 @@ function updateMapAndList(filteredPlaces, searchTerm = "") {
   currentFilteredPlaces = filteredPlaces;
   clearMarkers();
   renderMapResults(filteredPlaces, searchTerm);
+  updateResultsCollapseState(filteredPlaces.length);
 
   if (!map) return;
 
   if (filteredPlaces.length === 0) {
     map.setView([43.6532, -79.3832], 11);
+    setActiveMarker("");
     return;
   }
 
@@ -319,7 +362,9 @@ function attachResultCardEvents() {
   const cards = document.querySelectorAll(".map-result-card");
 
   cards.forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+
       const placeName = card.dataset.placeName;
       const place = currentFilteredPlaces.find((item) => item.name === placeName);
       const markerObj = markers.find((item) => item.place.name === placeName);
@@ -355,7 +400,6 @@ function highlightSelectedCard(placeName) {
     card.classList.remove("is-selected");
     if (card.dataset.placeName === placeName) {
       card.classList.add("is-selected");
-      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   });
 }
