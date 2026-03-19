@@ -454,11 +454,24 @@ function initAboutSmoke() {
     pointerToViewBox(touch.clientX, touch.clientY);
   }
 
-  reveal.addEventListener("pointermove", onMove);
+  function onWindowPointerMove(e) {
+    const rect = reveal.getBoundingClientRect();
+    const withinX = e.clientX >= rect.left && e.clientX <= rect.right;
+    const withinY = e.clientY >= rect.top && e.clientY <= rect.bottom;
+
+    if (!withinX || !withinY) {
+      active = false;
+      return;
+    }
+
+    onMove(e);
+  }
+
   reveal.addEventListener("pointerenter", onMove);
   reveal.addEventListener("pointerleave", () => {
     active = false;
   });
+  window.addEventListener("pointermove", onWindowPointerMove);
 
   reveal.addEventListener("touchstart", onTouchMove, { passive: true });
   reveal.addEventListener("touchmove", onTouchMove, { passive: true });
@@ -508,6 +521,9 @@ function initAboutSmoke() {
 
   window.addEventListener("beforeunload", () => {
     if (rafId) cancelAnimationFrame(rafId);
+  });
+  window.addEventListener("pointerleave", () => {
+    active = false;
   });
 }
 

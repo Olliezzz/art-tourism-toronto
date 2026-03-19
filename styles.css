@@ -729,6 +729,7 @@ textarea{
   display: flex;
   align-items: center;
   padding: 90px 0 60px;
+  pointer-events: none;
 }
 
 .about-copy{
