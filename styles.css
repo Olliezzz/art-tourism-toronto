@@ -605,7 +605,7 @@ textarea{
 }
 
 /* =========================
-   ABOUT PAGE
+   ABOUT PAGE — FIXED SMOKE
    ========================= */
 
 .about-page{
@@ -686,10 +686,11 @@ textarea{
   width: 100%;
   height: 100%;
   z-index: 2;
+  overflow: visible;
 }
 
 .about-bright-image{
-  filter: brightness(1.18) saturate(1.1) contrast(1.05);
+  filter: brightness(1.26) saturate(1.12) contrast(1.06);
 }
 
 .about-vignette{
@@ -746,9 +747,43 @@ textarea{
   line-height: 1;
 }
 
-.about-copy-mix{
+.about-text-stack{
+  position: relative;
+}
+
+.about-copy-white,
+.about-copy-purple{
+  position: relative;
+}
+
+.about-copy-white{
   color: #ffffff;
-  mix-blend-mode: difference;
+}
+
+.about-copy-purple{
+  position: absolute;
+  inset: 0;
+  color: var(--deep);
+  pointer-events: none;
+  opacity: 1;
+
+  /* same smoke-shaped reveal for text */
+  -webkit-mask-image: radial-gradient(
+    circle var(--text-r, 180px) at var(--text-x, 50%) var(--text-y, 50%),
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.96) 40%,
+    rgba(0,0,0,0.45) 72%,
+    rgba(0,0,0,0) 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--text-r, 180px) at var(--text-x, 50%) var(--text-y, 50%),
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.96) 40%,
+    rgba(0,0,0,0.45) 72%,
+    rgba(0,0,0,0) 100%
+  );
+
+  filter: blur(0.15px);
 }
 
 .about-title{
@@ -774,27 +809,6 @@ textarea{
 
 /* RESPONSIVE */
 @media (max-width: 980px){
-  .event-card{
-    grid-template-columns: 1fr;
-  }
-
-  .event-media{
-    justify-items: start;
-  }
-
-  .museum-grid{
-    grid-template-columns: 1fr;
-  }
-
-  .map-bleed{
-    padding: 0 2vw;
-  }
-
-  #map{
-    height: 54vh;
-    min-height: 340px;
-  }
-
   .about-hero{
     min-height: 132svh;
   }
@@ -812,23 +826,6 @@ textarea{
 }
 
 @media (max-width: 640px){
-  .container{
-    width: 94vw;
-  }
-
-  .header-grid{
-    grid-template-columns: 1fr;
-  }
-
-  .nav{
-    justify-content: flex-start;
-  }
-
-  #map{
-    height: 44vh;
-    min-height: 280px;
-  }
-
   .about-topbar{
     padding: 16px;
   }

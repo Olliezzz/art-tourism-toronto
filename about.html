@@ -17,7 +17,7 @@
 
   <main class="about-stage">
     <section class="about-hero">
-      <div class="about-bg-wrap" id="aboutReveal">
+      <div class="about-bg-wrap" id="aboutRevealArea">
         <img
           src="images/about-duotone-1.jpg"
           alt="Collage of Toronto museums and cultural spaces"
@@ -31,11 +31,11 @@
           aria-hidden="true"
         >
           <defs>
-            <filter id="smokeDistort" x="-40%" y="-40%" width="180%" height="180%">
+            <filter id="smokeDistort" x="-60%" y="-60%" width="220%" height="220%">
               <feTurbulence
                 id="smokeNoise"
                 type="fractalNoise"
-                baseFrequency="0.014 0.025"
+                baseFrequency="0.012 0.02"
                 numOctaves="3"
                 seed="7"
                 result="noise"
@@ -44,12 +44,12 @@
                 id="smokeDisplace"
                 in="SourceGraphic"
                 in2="noise"
-                scale="24"
+                scale="28"
                 xChannelSelector="R"
                 yChannelSelector="G"
                 result="distorted"
               />
-              <feGaussianBlur in="distorted" stdDeviation="2.4" result="blurred" />
+              <feGaussianBlur in="distorted" stdDeviation="2.6" result="blurred" />
               <feColorMatrix
                 in="blurred"
                 type="matrix"
@@ -57,13 +57,13 @@
                   1 0 0 0 0
                   0 1 0 0 0
                   0 0 1 0 0
-                  0 0 0 20 -7
+                  0 0 0 18 -6
                 "
               />
             </filter>
 
-            <filter id="smokeGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="4.8" result="gblur" />
+            <filter id="smokeGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="6.5" result="gblur" />
               <feColorMatrix
                 in="gblur"
                 type="matrix"
@@ -77,14 +77,13 @@
             </filter>
 
             <mask id="smokeMask">
-              <rect x="0" y="0" width="100" height="100" fill="black" />
-              <g id="smokeMaskGroup" filter="url(#smokeDistort)" fill="white">
-                <ellipse data-smoke-blob="1" cx="50" cy="50" rx="11" ry="9" />
-                <ellipse data-smoke-blob="2" cx="55" cy="47" rx="9" ry="7" />
-                <ellipse data-smoke-blob="3" cx="45" cy="53" rx="8" ry="6.5" />
-                <ellipse data-smoke-blob="4" cx="51" cy="57" rx="7.5" ry="6" />
-                <ellipse data-smoke-blob="5" cx="58" cy="54" rx="6.5" ry="5.4" />
-                <ellipse data-smoke-blob="6" cx="43" cy="45" rx="6.8" ry="5.2" />
+              <rect x="0" y="0" width="100" height="100" fill="black"></rect>
+              <g id="smokeCloud" filter="url(#smokeDistort)" fill="white">
+                <ellipse id="cloud-main" cx="50" cy="50" rx="13" ry="10.5"></ellipse>
+                <ellipse id="cloud-a" cx="45" cy="48" rx="8.5" ry="7"></ellipse>
+                <ellipse id="cloud-b" cx="55" cy="47" rx="8" ry="6.5"></ellipse>
+                <ellipse id="cloud-c" cx="48" cy="56" rx="7.5" ry="6.3"></ellipse>
+                <ellipse id="cloud-d" cx="58" cy="54" rx="6.8" ry="5.8"></ellipse>
               </g>
             </mask>
           </defs>
@@ -98,12 +97,12 @@
             preserveAspectRatio="xMidYMid slice"
             mask="url(#smokeMask)"
             class="about-bright-image"
-          />
+          ></image>
 
-          <g mask="url(#smokeMask)" opacity="0.9" filter="url(#smokeGlow)">
-            <rect x="0" y="0" width="100" height="100" fill="white" opacity="0.16" />
-            <rect x="0" y="0" width="100" height="100" fill="#2fe8ff" opacity="0.05" />
-            <rect x="0" y="0" width="100" height="100" fill="#c8ff2e" opacity="0.05" />
+          <g mask="url(#smokeMask)" opacity="0.95" filter="url(#smokeGlow)">
+            <rect x="0" y="0" width="100" height="100" fill="white" opacity="0.16"></rect>
+            <rect x="0" y="0" width="100" height="100" fill="#2fe8ff" opacity="0.06"></rect>
+            <rect x="0" y="0" width="100" height="100" fill="#c8ff2e" opacity="0.05"></rect>
           </g>
         </svg>
 
@@ -115,15 +114,28 @@
         <div class="about-copy">
           <p class="about-label">About</p>
 
-          <div class="about-copy-mix">
-            <h1 class="about-title">Art Tourism Toronto</h1>
-            <p class="about-text">
-              Art Tourism Toronto is a visual guide to exploring the city through museums,
-              galleries, exhibitions, and cultural spaces. The site combines a map-based
-              way of navigating Toronto’s art scene with exhibition highlights, archived
-              events, and shared visitor tips, making it easier to discover where to go,
-              what is happening, and how different cultural destinations connect across the city.
-            </p>
+          <div class="about-text-stack">
+            <div class="about-copy-white">
+              <h1 class="about-title">Art Tourism Toronto</h1>
+              <p class="about-text">
+                Art Tourism Toronto is a visual guide to exploring the city through museums,
+                galleries, exhibitions, and cultural spaces. The site combines a map-based
+                way of navigating Toronto’s art scene with exhibition highlights, archived
+                events, and shared visitor tips, making it easier to discover where to go,
+                what is happening, and how different cultural destinations connect across the city.
+              </p>
+            </div>
+
+            <div class="about-copy-purple" id="aboutTextReveal">
+              <h1 class="about-title">Art Tourism Toronto</h1>
+              <p class="about-text">
+                Art Tourism Toronto is a visual guide to exploring the city through museums,
+                galleries, exhibitions, and cultural spaces. The site combines a map-based
+                way of navigating Toronto’s art scene with exhibition highlights, archived
+                events, and shared visitor tips, making it easier to discover where to go,
+                what is happening, and how different cultural destinations connect across the city.
+              </p>
+            </div>
           </div>
         </div>
       </div>

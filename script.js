@@ -416,55 +416,99 @@ function highlightSelectedCard(placeName) {
   });
 }
 
-/* -----------------------------
+//* -----------------------------
    ABOUT PAGE SMOKE REVEAL
 ----------------------------- */
 function initAboutSmoke() {
-  const reveal = document.getElementById("aboutReveal");
+  const revealArea = document.getElementById("aboutRevealArea");
+  const textReveal = document.getElementById("aboutTextReveal");
   const noise = document.getElementById("smokeNoise");
   const displace = document.getElementById("smokeDisplace");
-  const blobs = Array.from(document.querySelectorAll("[data-smoke-blob]"));
 
-  if (!reveal || !noise || !displace || blobs.length === 0) return;
+  const main = document.getElementById("cloud-main");
+  const a = document.getElementById("cloud-a");
+  const b = document.getElementById("cloud-b");
+  const c = document.getElementById("cloud-c");
+  const d = document.getElementById("cloud-d");
 
-  let targetX = 50;
+  if (!revealArea || !textReveal || !noise || !displace || !main || !a || !b || !c || !d) {
+    return;
+  }
+
+  let bounds = revealArea.getBoundingClientRect();
+
+  let pointerX = bounds.width * 0.56;
+  let pointerY = bounds.height * 0.5;
+
+  let targetX = 56;
   let targetY = 50;
-  let currentX = 50;
+
+  let currentX = 56;
   let currentY = 50;
+
+  let velocityX = 0;
+  let velocityY = 0;
+
   let active = false;
   let rafId = null;
 
-  function pointerToViewBox(clientX, clientY) {
-    const rect = reveal.getBoundingClientRect();
-    const x = ((clientX - rect.left) / rect.width) * 100;
-    const y = ((clientY - rect.top) / rect.height) * 100;
-    targetX = Math.max(0, Math.min(100, x));
-    targetY = Math.max(0, Math.min(100, y));
+  function updateBounds() {
+    bounds = revealArea.getBoundingClientRect();
   }
 
-  function onMove(e) {
+  function clamp(num, min, max) {
+    return Math.max(min, Math.min(max, num));
+  }
+
+  function clientToViewbox(clientX, clientY) {
+    updateBounds();
+
+    const relX = clamp((clientX - bounds.left) / bounds.width, 0, 1);
+    const relY = clamp((clientY - bounds.top) / bounds.height, 0, 1);
+
+    pointerX = clientX - bounds.left;
+    pointerY = clientY - bounds.top;
+
+    targetX = relX * 100;
+    targetY = relY * 100;
+  }
+
+  function setFromCenter() {
+    updateBounds();
+    pointerX = bounds.width * 0.56;
+    pointerY = bounds.height * 0.5;
+    targetX = 56;
+    targetY = 50;
+    currentX = 56;
+    currentY = 50;
+  }
+
+  function onPointerMove(e) {
     active = true;
-    pointerToViewBox(e.clientX, e.clientY);
+    clientToViewbox(e.clientX, e.clientY);
   }
 
   function onTouchMove(e) {
     const touch = e.touches[0];
     if (!touch) return;
     active = true;
-    pointerToViewBox(touch.clientX, touch.clientY);
+    clientToViewbox(touch.clientX, touch.clientY);
   }
 
-  reveal.addEventListener("pointermove", onMove);
-  reveal.addEventListener("pointerenter", onMove);
-  reveal.addEventListener("pointerleave", () => {
+  revealArea.addEventListener("pointerenter", onPointerMove);
+  revealArea.addEventListener("pointermove", onPointerMove);
+  revealArea.addEventListener("pointerleave", () => {
     active = false;
   });
 
-  reveal.addEventListener("touchstart", onTouchMove, { passive: true });
-  reveal.addEventListener("touchmove", onTouchMove, { passive: true });
-  reveal.addEventListener("touchend", () => {
+  revealArea.addEventListener("touchstart", onTouchMove, { passive: true });
+  revealArea.addEventListener("touchmove", onTouchMove, { passive: true });
+  revealArea.addEventListener("touchend", () => {
     active = false;
   });
+
+  window.addEventListener("resize", updateBounds);
+  window.addEventListener("scroll", updateBounds, { passive: true });
 
   function setEllipse(el, cx, cy, rx, ry) {
     el.setAttribute("cx", cx.toFixed(2));
@@ -473,49 +517,90 @@ function initAboutSmoke() {
     el.setAttribute("ry", ry.toFixed(2));
   }
 
-  function animate(now) {
-    const t = now * 0.001;
+  function animate(time) {
+    const t = time * 0.001;
 
-    currentX += (targetX - currentX) * (active ? 0.16 : 0.08);
-    currentY += (targetY - currentY) * (active ? 0.16 : 0.08);
+    /* idle breathing even when not moving */
+    const idleX = Math.sin(t * 0.55) * 0.6;
+    const idleY = Math.cos(t * 0.48) * 0.5;
 
-    const isMobile = window.innerWidth < 700;
-    const base = active ? (isMobile ? 10.5 : 12.8) : (isMobile ? 7.2 : 8.4);
+    const destinationX = active ? targetX : 56 + idleX;
+    const destinationY = active ? targetY : 50 + idleY;
 
-    const wobbleA = Math.sin(t * 2.1);
-    const wobbleB = Math.cos(t * 1.7);
-    const wobbleC = Math.sin(t * 1.3 + 1.2);
-    const wobbleD = Math.cos(t * 1.9 + 0.8);
+    /* softer spring motion, less magnetic */
+    const spring = active ? 0.035 : 0.02;
+    const friction = active ? 0.82 : 0.88;
 
-    setEllipse(blobs[0], currentX, currentY, base + wobbleA * 0.9, base * 0.82 + wobbleB * 0.7);
-    setEllipse(blobs[1], currentX + 3.5 + wobbleB * 1.8, currentY - 2.2 + wobbleC * 1.5, base * 0.9, base * 0.68);
-    setEllipse(blobs[2], currentX - 4.2 + wobbleC * 1.7, currentY + 2.8 + wobbleA * 1.4, base * 0.78, base * 0.62);
-    setEllipse(blobs[3], currentX + 1.6 + wobbleD * 2.0, currentY + 5.0 + wobbleB * 1.2, base * 0.72, base * 0.56);
-    setEllipse(blobs[4], currentX + 6.0 + wobbleA * 1.6, currentY + 1.0 + wobbleD * 1.6, base * 0.6, base * 0.5);
-    setEllipse(blobs[5], currentX - 5.8 + wobbleB * 1.5, currentY - 4.1 + wobbleC * 1.3, base * 0.64, base * 0.5);
+    velocityX += (destinationX - currentX) * spring;
+    velocityY += (destinationY - currentY) * spring;
 
-    const freqX = 0.012 + Math.sin(t * 0.65) * 0.0022;
-    const freqY = 0.021 + Math.cos(t * 0.78) * 0.0031;
+    velocityX *= friction;
+    velocityY *= friction;
+
+    currentX += velocityX;
+    currentY += velocityY;
+
+    const big = active ? 14.5 : 12.4;
+    const pulse = Math.sin(t * 1.4) * 0.55;
+    const pulse2 = Math.cos(t * 1.1) * 0.45;
+
+    /* one cloud, not separate pieces */
+    setEllipse(main, currentX, currentY, big + pulse, 11.2 + pulse2);
+
+    setEllipse(
+      a,
+      currentX - 5.0 + Math.sin(t * 1.1) * 0.9,
+      currentY - 1.8 + Math.cos(t * 1.3) * 0.7,
+      8.6 + Math.sin(t * 1.5) * 0.35,
+      7.0 + Math.cos(t * 1.2) * 0.3
+    );
+
+    setEllipse(
+      b,
+      currentX + 5.2 + Math.cos(t * 1.15) * 0.8,
+      currentY - 2.1 + Math.sin(t * 1.25) * 0.7,
+      8.2 + Math.cos(t * 1.35) * 0.35,
+      6.8 + Math.sin(t * 1.1) * 0.3
+    );
+
+    setEllipse(
+      c,
+      currentX - 1.8 + Math.sin(t * 1.4 + 0.8) * 0.8,
+      currentY + 4.2 + Math.cos(t * 1.2 + 0.6) * 0.7,
+      7.6 + Math.sin(t * 1.25) * 0.3,
+      6.4 + Math.cos(t * 1.15) * 0.28
+    );
+
+    setEllipse(
+      d,
+      currentX + 5.8 + Math.cos(t * 1.3 + 0.4) * 0.75,
+      currentY + 2.5 + Math.sin(t * 1.18 + 1.1) * 0.65,
+      6.9 + Math.cos(t * 1.28) * 0.25,
+      5.8 + Math.sin(t * 1.22) * 0.24
+    );
+
+    /* animated turbulence for smoke motion */
+    const freqX = 0.011 + Math.sin(t * 0.62) * 0.0015;
+    const freqY = 0.019 + Math.cos(t * 0.74) * 0.0022;
     noise.setAttribute("baseFrequency", `${freqX.toFixed(4)} ${freqY.toFixed(4)}`);
 
-    const scale = active ? 30 + Math.sin(t * 1.6) * 3 : 18 + Math.sin(t * 1.2) * 2;
-    displace.setAttribute("scale", scale.toFixed(2));
+    const displacement = active ? 30 + Math.sin(t * 1.1) * 2.8 : 22 + Math.sin(t * 0.95) * 2.2;
+    displace.setAttribute("scale", displacement.toFixed(2));
+
+    /* text reveal follows actual pointer position in pixels */
+    textReveal.style.setProperty("--text-x", `${pointerX}px`);
+    textReveal.style.setProperty("--text-y", `${pointerY}px`);
+    textReveal.style.setProperty("--text-r", active ? "220px" : "180px");
 
     rafId = requestAnimationFrame(animate);
   }
 
+  setFromCenter();
   rafId = requestAnimationFrame(animate);
 
   window.addEventListener("beforeunload", () => {
     if (rafId) cancelAnimationFrame(rafId);
   });
-}
-
-/* -----------------------------
-   HELPERS
------------------------------ */
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 /* -----------------------------
