@@ -5,122 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — Art Tourism Toronto</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
 </head>
+<body class="about-page">
 
-<body class="theme-purple">
-  <header class="site-header" id="top">
-    <div class="container header-grid">
-      <div class="brand">
-        <h1 class="brand-title">ART TOURISM</h1>
-        <p class="brand-subtitle">TORONTO</p>
-      </div>
-
-      <nav class="nav" aria-label="Primary">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="index.html#exhibitions" class="nav-link">Exhibitions</a>
-        <a href="index.html#museums" class="nav-link">Museums</a>
-        <a href="index.html#archive" class="nav-link">Archive</a>
-        <a href="index.html#peers" class="nav-link">Peers</a>
-      </nav>
-    </div>
+  <header class="about-topbar">
+    <a href="index.html" class="about-toplink">Home</a>
+    <span class="about-toplink is-current">About</span>
   </header>
 
-  <main>
-    <section class="section about-hero">
-      <div class="container">
-        <p class="eyebrow">About the project</p>
-        <h2 class="hero-title">Art Tourism Toronto</h2>
-        <p class="hero-desc">
-          Art Tourism Toronto is a digital guide designed to help people explore museums,
-          galleries, and exhibitions across the city through an interactive and visually engaging experience.
-        </p>
+  <main class="about-stage">
+    <section class="about-hero">
+      <div class="about-bg-wrap">
+        <div class="about-reveal" id="aboutReveal">
+          <img
+            src="images/about-duotone-1.jpg"
+            alt="Collage of Toronto museums and cultural spaces"
+            class="about-img about-img-base"
+          />
+          <img
+            src="images/about-duotone-2.jpg"
+            alt=""
+            aria-hidden="true"
+            class="about-img about-img-top"
+          />
+          <div class="about-grain"></div>
+        </div>
       </div>
-    </section>
 
-    <section class="section">
-      <div class="container about-grid">
-        <article class="card about-card">
-          <h3 class="card-title">Purpose</h3>
-          <p class="card-desc">
-            This project aims to make Toronto’s art scene easier to discover by bringing together
-            cultural destinations, temporary exhibitions, and location-based browsing in one place.
+      <div class="about-overlay">
+        <div class="about-copy">
+          <p class="about-label">About</p>
+          <h1 class="about-title">Art Tourism Toronto</h1>
+          <p class="about-text">
+            Art Tourism Toronto is a visual guide to exploring the city through museums,
+            galleries, exhibitions, and cultural spaces. The site brings together a map-based
+            way of navigating Toronto’s art scene with exhibition highlights, archived events,
+            and shared visitor tips, making it easier to discover where to go, what is happening,
+            and how different cultural destinations connect across the city.
           </p>
-        </article>
-
-        <article class="card about-card">
-          <h3 class="card-title">Audience</h3>
-          <p class="card-desc">
-            The site is intended for locals, tourists, students, and anyone interested in experiencing
-            art in Toronto, whether they are planning a full museum day or looking for a single exhibition nearby.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section section-dark">
-      <div class="container">
-        <h2 class="section-title">What the site includes</h2>
-
-        <div class="about-features">
-          <article class="card about-feature-card">
-            <h3 class="card-title">Interactive map</h3>
-            <p class="card-desc">
-              A map-based interface helps users see where museums and exhibitions are located across Toronto.
-            </p>
-          </article>
-
-          <article class="card about-feature-card">
-            <h3 class="card-title">Search and filters</h3>
-            <p class="card-desc">
-              Users can browse by type, cost, and keyword to quickly narrow down places of interest.
-            </p>
-          </article>
-
-          <article class="card about-feature-card">
-            <h3 class="card-title">Exhibition highlights</h3>
-            <p class="card-desc">
-              Featured exhibition cards bring attention to current and upcoming cultural events.
-            </p>
-          </article>
-
-          <article class="card about-feature-card">
-            <h3 class="card-title">Future expansion</h3>
-            <p class="card-desc">
-              The project can grow to include routes, neighborhood guides, event detail pages, and peer recommendations.
-            </p>
-          </article>
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="container about-text-block">
-        <h2 class="section-title">Why Toronto</h2>
-        <p class="card-desc">
-          Toronto offers a rich cultural landscape shaped by major institutions, smaller galleries,
-          contemporary art spaces, and citywide festivals. The project highlights the diversity of
-          artistic experiences available across different neighborhoods and makes them more accessible through design.
-        </p>
-      </div>
-    </section>
-
-    <section class="section section-acid">
-      <div class="container about-text-block">
-        <h2 class="section-title">Project status</h2>
-        <p class="card-desc">
-          This website is currently a prototype in development. It demonstrates the visual system,
-          information structure, and interactive map functionality, while leaving room for future additions
-          such as expanded listings, route planning, and deeper event pages.
-        </p>
-      </div>
-    </section>
+    <section class="about-scroll-space" aria-hidden="true"></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <p>Art Tourism Toronto — Site in progress</p>
-      <a class="link" href="#top">Back to top ↑</a>
-    </div>
-  </footer>
 </body>
 </html>

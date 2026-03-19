@@ -689,4 +689,251 @@ input, textarea{
     grid-template-columns: 1fr;
   }
 }
+/* =========================
+   ABOUT PAGE — MINIMAL
+   ========================= */
+
+.about-page{
+  margin: 0;
+  background: #d8d6ff;
+  color: #121222;
+  font-family: Arial, sans-serif;
+}
+
+/* top bar */
+.about-topbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  mix-blend-mode: difference;
+}
+
+.about-toplink{
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.about-toplink.is-current{
+  opacity: 0.75;
+}
+
+/* stage */
+.about-stage{
+  position: relative;
+}
+
+.about-hero{
+  position: relative;
+  min-height: 140vh;
+}
+
+/* fixed background image */
+.about-bg-wrap{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: #121222;
+}
+
+.about-reveal{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  --x: 50%;
+  --y: 50%;
+  --r: 170px;
+  cursor: crosshair;
+}
+
+.about-img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-img-base{
+  z-index: 1;
+}
+
+.about-img-top{
+  z-index: 2;
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.92) 32%,
+    rgba(0,0,0,0.52) 56%,
+    rgba(0,0,0,0.12) 76%,
+    rgba(0,0,0,0) 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.92) 32%,
+    rgba(0,0,0,0.52) 56%,
+    rgba(0,0,0,0.12) 76%,
+    rgba(0,0,0,0) 100%
+  );
+}
+
+/* glow / smoke softness */
+.about-reveal::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle calc(var(--r) * 0.95) at var(--x) var(--y),
+      rgba(255,255,255,0.18) 0%,
+      rgba(47,232,255,0.10) 26%,
+      rgba(200,255,46,0.10) 48%,
+      rgba(255,255,255,0.03) 67%,
+      rgba(255,255,255,0) 100%
+    );
+  mix-blend-mode: screen;
+}
+
+/* subtle dark wash so text stays readable */
+.about-bg-wrap::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(18,18,34,0.72) 0%,
+      rgba(18,18,34,0.48) 24%,
+      rgba(18,18,34,0.14) 48%,
+      rgba(18,18,34,0.06) 70%,
+      rgba(18,18,34,0.14) 100%
+    );
+}
+
+/* grain */
+.about-grain{
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image:
+    radial-gradient(#ffffff 0.7px, transparent 0.7px),
+    radial-gradient(#000000 0.7px, transparent 0.7px);
+  background-position: 0 0, 14px 14px;
+  background-size: 28px 28px;
+  mix-blend-mode: overlay;
+}
+
+/* text overlay */
+.about-overlay{
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 90px 0 60px;
+}
+
+.about-copy{
+  width: min(520px, calc(100vw - 48px));
+  margin-left: clamp(20px, 6vw, 72px);
+  color: #ffffff;
+}
+
+.about-label{
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #c8ff2e;
+}
+
+.about-title{
+  margin: 0 0 18px;
+  font-size: clamp(42px, 7vw, 94px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.about-text{
+  margin: 0;
+  font-size: clamp(16px, 1.5vw, 20px);
+  line-height: 1.55;
+  max-width: 34ch;
+}
+
+/* extra scroll so the fixed image effect is visible */
+.about-scroll-space{
+  position: relative;
+  z-index: 10;
+  height: 36vh;
+}
+
+/* touch / small screens */
+@media (max-width: 900px){
+  .about-hero{
+    min-height: 128vh;
+  }
+
+  .about-copy{
+    width: min(460px, calc(100vw - 32px));
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .about-title{
+    font-size: clamp(38px, 12vw, 68px);
+  }
+
+  .about-text{
+    max-width: 32ch;
+  }
+}
+
+@media (max-width: 640px){
+  .about-topbar{
+    padding: 16px;
+  }
+
+  .about-overlay{
+    align-items: flex-end;
+    padding: 90px 0 40px;
+  }
+
+  .about-copy{
+    width: calc(100vw - 32px);
+    margin-left: 16px;
+  }
+
+  .about-text{
+    font-size: 16px;
+    max-width: 30ch;
+  }
+
+  .about-reveal{
+    --r: 120px;
+    cursor: default;
+  }
+
+  .about-scroll-space{
+    height: 24vh;
+  }
+}
 }

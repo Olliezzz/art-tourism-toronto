@@ -125,7 +125,7 @@ const places = [
     type: "street-art",
     price: "free",
     area: "Bloor-Yorkville",
-    position: [43.6670, -79.3945],
+    position: [43.650033921678755, -79.37373207615038],
     description: "Outdoor sculpture garden with rotating exhibits.",
     link: "https://www.torontosculpturegarden.ca/"
   }
@@ -430,3 +430,44 @@ function capitalize(word) {
 window.addEventListener("load", () => {
   initLeafletMap();
 });
+/* -----------------------------
+   ABOUT PAGE DUOTONE REVEAL
+----------------------------- */
+function initAboutReveal() {
+  const reveal = document.getElementById("aboutReveal");
+  if (!reveal) return;
+
+  const updatePosition = (clientX, clientY) => {
+    const rect = reveal.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    reveal.style.setProperty("--x", `${x}px`);
+    reveal.style.setProperty("--y", `${y}px`);
+  };
+
+  reveal.addEventListener("mousemove", (e) => {
+    updatePosition(e.clientX, e.clientY);
+  });
+
+  reveal.addEventListener("mouseenter", (e) => {
+    updatePosition(e.clientX, e.clientY);
+  });
+
+  reveal.addEventListener("mouseleave", () => {
+    reveal.style.setProperty("--x", "50%");
+    reveal.style.setProperty("--y", "50%");
+  });
+
+  reveal.addEventListener(
+    "touchmove",
+    (e) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      updatePosition(touch.clientX, touch.clientY);
+    },
+    { passive: true }
+  );
+}
+
+window.addEventListener("load", initAboutReveal);
