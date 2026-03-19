@@ -29,9 +29,10 @@ const exploreBtn = document.querySelector(".hero-actions .btn-primary");
 if (exploreBtn) {
   exploreBtn.addEventListener("click", function (e) {
     e.preventDefault();
-    document.querySelector("#exhibitions").scrollIntoView({
-      behavior: "smooth"
-    });
+    const target = document.querySelector("#exhibitions");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
   });
 }
 
@@ -124,8 +125,8 @@ const places = [
     name: "Toronto Sculpture Garden",
     type: "street-art",
     price: "free",
-    area: "Bloor-Yorkville",
-    position: [43.650033921678755, -79.37373207615038],
+    area: "Downtown",
+    position: [43.6500, -79.3737],
     description: "Outdoor sculpture garden with rotating exhibits.",
     link: "https://www.torontosculpturegarden.ca/"
   }
@@ -170,22 +171,21 @@ function setActiveMarker(placeName) {
 ----------------------------- */
 function initLeafletMap() {
   const mapElement = document.getElementById("map");
-
   if (!mapElement || typeof L === "undefined") return;
 
   map = L.map("map", {
-  scrollWheelZoom: false,
-  zoomControl: false,
-  dragging: true,
-  touchZoom: true,
-  doubleClickZoom: true,
-  boxZoom: false,
-  keyboard: true
-}).setView([43.6532, -79.3832], 11);
+    scrollWheelZoom: false,
+    zoomControl: false,
+    dragging: true,
+    touchZoom: true,
+    doubleClickZoom: true,
+    boxZoom: false,
+    keyboard: true
+  }).setView([43.6532, -79.3832], 11);
 
-L.control.zoom({
-  position: "topleft"
-}).addTo(map);
+  L.control.zoom({
+    position: "topleft"
+  }).addTo(map);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
@@ -239,7 +239,6 @@ function updateResultsCollapseState(totalItems) {
   if (!results || !toggleBtn) return;
 
   const shouldCollapse = totalItems > 3 && !resultsExpanded;
-
   results.classList.toggle("is-collapsed", shouldCollapse);
 
   if (totalItems <= 3) {
@@ -418,6 +417,101 @@ function highlightSelectedCard(placeName) {
 }
 
 /* -----------------------------
+   ABOUT PAGE SMOKE REVEAL
+----------------------------- */
+function initAboutSmoke() {
+  const reveal = document.getElementById("aboutReveal");
+  const noise = document.getElementById("smokeNoise");
+  const displace = document.getElementById("smokeDisplace");
+  const blobs = Array.from(document.querySelectorAll("[data-smoke-blob]"));
+
+  if (!reveal || !noise || !displace || blobs.length === 0) return;
+
+  let targetX = 50;
+  let targetY = 50;
+  let currentX = 50;
+  let currentY = 50;
+  let active = false;
+  let rafId = null;
+
+  function pointerToViewBox(clientX, clientY) {
+    const rect = reveal.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    targetX = Math.max(0, Math.min(100, x));
+    targetY = Math.max(0, Math.min(100, y));
+  }
+
+  function onMove(e) {
+    active = true;
+    pointerToViewBox(e.clientX, e.clientY);
+  }
+
+  function onTouchMove(e) {
+    const touch = e.touches[0];
+    if (!touch) return;
+    active = true;
+    pointerToViewBox(touch.clientX, touch.clientY);
+  }
+
+  reveal.addEventListener("pointermove", onMove);
+  reveal.addEventListener("pointerenter", onMove);
+  reveal.addEventListener("pointerleave", () => {
+    active = false;
+  });
+
+  reveal.addEventListener("touchstart", onTouchMove, { passive: true });
+  reveal.addEventListener("touchmove", onTouchMove, { passive: true });
+  reveal.addEventListener("touchend", () => {
+    active = false;
+  });
+
+  function setEllipse(el, cx, cy, rx, ry) {
+    el.setAttribute("cx", cx.toFixed(2));
+    el.setAttribute("cy", cy.toFixed(2));
+    el.setAttribute("rx", rx.toFixed(2));
+    el.setAttribute("ry", ry.toFixed(2));
+  }
+
+  function animate(now) {
+    const t = now * 0.001;
+
+    currentX += (targetX - currentX) * (active ? 0.16 : 0.08);
+    currentY += (targetY - currentY) * (active ? 0.16 : 0.08);
+
+    const isMobile = window.innerWidth < 700;
+    const base = active ? (isMobile ? 10.5 : 12.8) : (isMobile ? 7.2 : 8.4);
+
+    const wobbleA = Math.sin(t * 2.1);
+    const wobbleB = Math.cos(t * 1.7);
+    const wobbleC = Math.sin(t * 1.3 + 1.2);
+    const wobbleD = Math.cos(t * 1.9 + 0.8);
+
+    setEllipse(blobs[0], currentX, currentY, base + wobbleA * 0.9, base * 0.82 + wobbleB * 0.7);
+    setEllipse(blobs[1], currentX + 3.5 + wobbleB * 1.8, currentY - 2.2 + wobbleC * 1.5, base * 0.9, base * 0.68);
+    setEllipse(blobs[2], currentX - 4.2 + wobbleC * 1.7, currentY + 2.8 + wobbleA * 1.4, base * 0.78, base * 0.62);
+    setEllipse(blobs[3], currentX + 1.6 + wobbleD * 2.0, currentY + 5.0 + wobbleB * 1.2, base * 0.72, base * 0.56);
+    setEllipse(blobs[4], currentX + 6.0 + wobbleA * 1.6, currentY + 1.0 + wobbleD * 1.6, base * 0.6, base * 0.5);
+    setEllipse(blobs[5], currentX - 5.8 + wobbleB * 1.5, currentY - 4.1 + wobbleC * 1.3, base * 0.64, base * 0.5);
+
+    const freqX = 0.012 + Math.sin(t * 0.65) * 0.0022;
+    const freqY = 0.021 + Math.cos(t * 0.78) * 0.0031;
+    noise.setAttribute("baseFrequency", `${freqX.toFixed(4)} ${freqY.toFixed(4)}`);
+
+    const scale = active ? 30 + Math.sin(t * 1.6) * 3 : 18 + Math.sin(t * 1.2) * 2;
+    displace.setAttribute("scale", scale.toFixed(2));
+
+    rafId = requestAnimationFrame(animate);
+  }
+
+  rafId = requestAnimationFrame(animate);
+
+  window.addEventListener("beforeunload", () => {
+    if (rafId) cancelAnimationFrame(rafId);
+  });
+}
+
+/* -----------------------------
    HELPERS
 ----------------------------- */
 function capitalize(word) {
@@ -429,45 +523,5 @@ function capitalize(word) {
 ----------------------------- */
 window.addEventListener("load", () => {
   initLeafletMap();
+  initAboutSmoke();
 });
-/* -----------------------------
-   ABOUT PAGE DUOTONE REVEAL
------------------------------ */
-function initAboutReveal() {
-  const reveal = document.getElementById("aboutReveal");
-  if (!reveal) return;
-
-  const updatePosition = (clientX, clientY) => {
-    const rect = reveal.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
-    reveal.style.setProperty("--x", `${x}px`);
-    reveal.style.setProperty("--y", `${y}px`);
-  };
-
-  reveal.addEventListener("mousemove", (e) => {
-    updatePosition(e.clientX, e.clientY);
-  });
-
-  reveal.addEventListener("mouseenter", (e) => {
-    updatePosition(e.clientX, e.clientY);
-  });
-
-  reveal.addEventListener("mouseleave", () => {
-    reveal.style.setProperty("--x", "50%");
-    reveal.style.setProperty("--y", "50%");
-  });
-
-  reveal.addEventListener(
-    "touchmove",
-    (e) => {
-      const touch = e.touches[0];
-      if (!touch) return;
-      updatePosition(touch.clientX, touch.clientY);
-    },
-    { passive: true }
-  );
-}
-
-window.addEventListener("load", initAboutReveal);

@@ -8,48 +8,128 @@
   <script src="script.js" defer></script>
 </head>
 <body class="about-page">
-
   <header class="about-topbar">
-    <a href="index.html" class="about-toplink">Home</a>
-    <span class="about-toplink is-current">About</span>
+    <nav class="about-topbar-mix" aria-label="About page navigation">
+      <a href="index.html" class="about-toplink">Home</a>
+      <span class="about-toplink is-current">About</span>
+    </nav>
   </header>
 
   <main class="about-stage">
     <section class="about-hero">
-      <div class="about-bg-wrap">
-        <div class="about-reveal" id="aboutReveal">
-          <img
-            src="images/about-duotone-1.jpg"
-            alt="Collage of Toronto museums and cultural spaces"
-            class="about-img about-img-base"
+      <div class="about-bg-wrap" id="aboutReveal">
+        <img
+          src="images/about-duotone-1.jpg"
+          alt="Collage of Toronto museums and cultural spaces"
+          class="about-img about-img-base"
+        />
+
+        <svg
+          class="about-smoke-svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid slice"
+          aria-hidden="true"
+        >
+          <defs>
+            <filter id="smokeDistort" x="-40%" y="-40%" width="180%" height="180%">
+              <feTurbulence
+                id="smokeNoise"
+                type="fractalNoise"
+                baseFrequency="0.014 0.025"
+                numOctaves="3"
+                seed="7"
+                result="noise"
+              />
+              <feDisplacementMap
+                id="smokeDisplace"
+                in="SourceGraphic"
+                in2="noise"
+                scale="24"
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result="distorted"
+              />
+              <feGaussianBlur in="distorted" stdDeviation="2.4" result="blurred" />
+              <feColorMatrix
+                in="blurred"
+                type="matrix"
+                values="
+                  1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 20 -7
+                "
+              />
+            </filter>
+
+            <filter id="smokeGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="4.8" result="gblur" />
+              <feColorMatrix
+                in="gblur"
+                type="matrix"
+                values="
+                  1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 10 -2
+                "
+              />
+            </filter>
+
+            <mask id="smokeMask">
+              <rect x="0" y="0" width="100" height="100" fill="black" />
+              <g id="smokeMaskGroup" filter="url(#smokeDistort)" fill="white">
+                <ellipse data-smoke-blob="1" cx="50" cy="50" rx="11" ry="9" />
+                <ellipse data-smoke-blob="2" cx="55" cy="47" rx="9" ry="7" />
+                <ellipse data-smoke-blob="3" cx="45" cy="53" rx="8" ry="6.5" />
+                <ellipse data-smoke-blob="4" cx="51" cy="57" rx="7.5" ry="6" />
+                <ellipse data-smoke-blob="5" cx="58" cy="54" rx="6.5" ry="5.4" />
+                <ellipse data-smoke-blob="6" cx="43" cy="45" rx="6.8" ry="5.2" />
+              </g>
+            </mask>
+          </defs>
+
+          <image
+            href="images/about-duotone-2.jpg"
+            x="0"
+            y="0"
+            width="100"
+            height="100"
+            preserveAspectRatio="xMidYMid slice"
+            mask="url(#smokeMask)"
+            class="about-bright-image"
           />
-          <img
-            src="images/about-duotone-2.jpg"
-            alt=""
-            aria-hidden="true"
-            class="about-img about-img-top"
-          />
-          <div class="about-grain"></div>
-        </div>
+
+          <g mask="url(#smokeMask)" opacity="0.9" filter="url(#smokeGlow)">
+            <rect x="0" y="0" width="100" height="100" fill="white" opacity="0.16" />
+            <rect x="0" y="0" width="100" height="100" fill="#2fe8ff" opacity="0.05" />
+            <rect x="0" y="0" width="100" height="100" fill="#c8ff2e" opacity="0.05" />
+          </g>
+        </svg>
+
+        <div class="about-vignette"></div>
+        <div class="about-grain"></div>
       </div>
 
       <div class="about-overlay">
         <div class="about-copy">
           <p class="about-label">About</p>
-          <h1 class="about-title">Art Tourism Toronto</h1>
-          <p class="about-text">
-            Art Tourism Toronto is a visual guide to exploring the city through museums,
-            galleries, exhibitions, and cultural spaces. The site brings together a map-based
-            way of navigating Toronto’s art scene with exhibition highlights, archived events,
-            and shared visitor tips, making it easier to discover where to go, what is happening,
-            and how different cultural destinations connect across the city.
-          </p>
+
+          <div class="about-copy-mix">
+            <h1 class="about-title">Art Tourism Toronto</h1>
+            <p class="about-text">
+              Art Tourism Toronto is a visual guide to exploring the city through museums,
+              galleries, exhibitions, and cultural spaces. The site combines a map-based
+              way of navigating Toronto’s art scene with exhibition highlights, archived
+              events, and shared visitor tips, making it easier to discover where to go,
+              what is happening, and how different cultural destinations connect across the city.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="about-scroll-space" aria-hidden="true"></section>
   </main>
-
 </body>
 </html>
