@@ -510,18 +510,3 @@ function initAboutSmoke() {
     if (rafId) cancelAnimationFrame(rafId);
   });
 }
-
-/* -----------------------------
-   HELPERS
------------------------------ */
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-/* -----------------------------
-   START
------------------------------ */
-window.addEventListener("load", () => {
-  initLeafletMap();
-  initAboutSmoke();
-});
