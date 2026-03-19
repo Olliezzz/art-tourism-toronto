@@ -421,12 +421,11 @@ function highlightSelectedCard(placeName) {
 ----------------------------- */
 function initAboutSmoke() {
   const reveal = document.getElementById("aboutReveal");
-  const hero = document.querySelector(".about-hero");
   const noise = document.getElementById("smokeNoise");
   const displace = document.getElementById("smokeDisplace");
   const blobs = Array.from(document.querySelectorAll("[data-smoke-blob]"));
 
-  if (!reveal || !hero || !noise || !displace || blobs.length === 0) return;
+  if (!reveal || !noise || !displace || blobs.length === 0) return;
 
   let targetX = 50;
   let targetY = 50;
@@ -435,31 +434,15 @@ function initAboutSmoke() {
   let active = false;
   let rafId = null;
 
-  function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  function heroIsVisible() {
-    const rect = hero.getBoundingClientRect();
-    return rect.bottom > 0 && rect.top < window.innerHeight;
-  }
-
   function pointerToViewBox(clientX, clientY) {
     const rect = reveal.getBoundingClientRect();
-
     const x = ((clientX - rect.left) / rect.width) * 100;
     const y = ((clientY - rect.top) / rect.height) * 100;
-
-    targetX = clamp(x, 0, 100);
-    targetY = clamp(y, 0, 100);
+    targetX = Math.max(0, Math.min(100, x));
+    targetY = Math.max(0, Math.min(100, y));
   }
 
   function onMove(e) {
-    if (!heroIsVisible()) {
-      active = false;
-      return;
-    }
-
     active = true;
     pointerToViewBox(e.clientX, e.clientY);
   }
@@ -467,25 +450,19 @@ function initAboutSmoke() {
   function onTouchMove(e) {
     const touch = e.touches[0];
     if (!touch) return;
-
-    if (!heroIsVisible()) {
-      active = false;
-      return;
-    }
-
     active = true;
     pointerToViewBox(touch.clientX, touch.clientY);
   }
 
-  function onLeaveWindow() {
+  reveal.addEventListener("pointermove", onMove);
+  reveal.addEventListener("pointerenter", onMove);
+  reveal.addEventListener("pointerleave", () => {
     active = false;
-  }
+  });
 
-  window.addEventListener("pointermove", onMove);
-  window.addEventListener("pointerleave", onLeaveWindow);
-  window.addEventListener("touchstart", onTouchMove, { passive: true });
-  window.addEventListener("touchmove", onTouchMove, { passive: true });
-  window.addEventListener("touchend", () => {
+  reveal.addEventListener("touchstart", onTouchMove, { passive: true });
+  reveal.addEventListener("touchmove", onTouchMove, { passive: true });
+  reveal.addEventListener("touchend", () => {
     active = false;
   });
 
@@ -499,15 +476,11 @@ function initAboutSmoke() {
   function animate(now) {
     const t = now * 0.001;
 
-    const idleX = 50 + Math.sin(t * 0.7) * 1.4;
-    const idleY = 50 + Math.cos(t * 0.6) * 1.1;
-
-    const followSpeed = active ? 0.16 : 0.06;
-    currentX += ((active ? targetX : idleX) - currentX) * followSpeed;
-    currentY += ((active ? targetY : idleY) - currentY) * followSpeed;
+    currentX += (targetX - currentX) * (active ? 0.16 : 0.08);
+    currentY += (targetY - currentY) * (active ? 0.16 : 0.08);
 
     const isMobile = window.innerWidth < 700;
-    const base = active ? (isMobile ? 10.5 : 12.8) : (isMobile ? 7.8 : 8.8);
+    const base = active ? (isMobile ? 10.5 : 12.8) : (isMobile ? 7.2 : 8.4);
 
     const wobbleA = Math.sin(t * 2.1);
     const wobbleB = Math.cos(t * 1.7);
@@ -537,3 +510,18 @@ function initAboutSmoke() {
     if (rafId) cancelAnimationFrame(rafId);
   });
 }
+
+/* -----------------------------
+   HELPERS
+----------------------------- */
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+/* -----------------------------
+   START
+----------------------------- */
+window.addEventListener("load", () => {
+  initLeafletMap();
+  initAboutSmoke();
+});
