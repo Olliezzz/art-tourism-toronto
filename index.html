@@ -24,8 +24,10 @@
   <header class="site-header" id="top">
     <div class="container header-grid">
       <div class="brand">
-        <h1 class="brand-title">ART TOURISM</h1>
-        <p class="brand-subtitle">TORONTO</p>
+        <a href="#map-entry" class="brand-link" aria-label="Back to map">
+          <span class="brand-title">ART TOURISM</span>
+          <span class="brand-subtitle">TORONTO</span>
+        </a>
       </div>
 
       <nav class="nav" aria-label="Primary">
@@ -40,11 +42,13 @@
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero" id="map-entry">
       <div class="container hero-grid">
         <div class="hero-text">
-          <h2 class="hero-title">Toronto</h2>
-          <p class="hero-desc">Discover art in Toronto</p>
+          <p class="hero-kicker">Start here</p>
+          <p class="hero-desc">
+            Search museums, exhibitions, and neighbourhoods first, then use the map to decide where to go next.
+          </p>
 
           <div class="hero-actions">
             <a class="btn btn-primary" href="#exhibitions">Explore Exhibitions</a>
@@ -55,14 +59,27 @@
 
       <div class="map-bleed">
         <div class="map-panel">
+          <div class="map-panel-head">
+            <div class="map-panel-copy">
+              <p class="map-kicker">Discover art in Toronto</p>
+              <h1 class="map-title">Find your next art stop</h1>
+              <p class="map-desc">
+                Search the city, scan the map, and use quick filters to move from idea to route.
+              </p>
+            </div>
+          </div>
+
           <div class="map-controls">
-            <input
-              type="text"
-              id="map-search"
-              class="map-search"
-              placeholder="Search museums or exhibitions"
-              aria-label="Search museums or exhibitions"
-            />
+            <label class="map-search-shell" for="map-search">
+              <span class="map-search-icon" aria-hidden="true">⌕</span>
+              <input
+                type="text"
+                id="map-search"
+                class="map-search"
+                placeholder="Search museums, exhibitions, or neighbourhoods"
+                aria-label="Search museums, exhibitions, or neighbourhoods"
+              />
+            </label>
 
             <div class="map-filters" aria-label="Map filters">
               <button class="map-chip active" data-map-filter="all" type="button">All</button>
@@ -75,12 +92,13 @@
           </div>
 
           <div id="map" aria-label="Map of museums and exhibitions in Toronto"></div>
-         <div class="map-results-wrap">
-  <button id="map-results-toggle" class="btn btn-small map-results-toggle" type="button" aria-expanded="false">
-    See more places
-  </button>
-  <div id="map-results" class="map-results is-collapsed"></div>
-</div>
+
+          <div class="map-results-wrap">
+            <div id="map-results" class="map-results is-collapsed"></div>
+            <button id="map-results-toggle" class="btn btn-small map-results-toggle" type="button" aria-expanded="false">
+              See more places
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -91,82 +109,13 @@
           <h2 class="section-title">Upcoming Exhibitions</h2>
 
           <div class="filter-bar" aria-label="Exhibition filters">
-            <span class="chip active" data-filter="all">All</span>
-            <span class="chip" data-filter="contemporary">Contemporary</span>
-            <span class="chip" data-filter="installation">Installation</span>
+            <button class="chip active" data-filter="all" type="button">All</button>
+            <button class="chip" data-filter="contemporary" type="button">Contemporary</button>
+            <button class="chip" data-filter="installation" type="button">Installation</button>
           </div>
         </div>
 
-        <div class="cards">
-          <article class="card event-card" data-type="contemporary">
-            <div class="event-date">
-              <span class="date-num">26</span>
-              <span class="date-mon">mar</span>
-            </div>
-
-            <div class="event-body">
-              <h3 class="card-title">Toronto Biennial of Art 2026</h3>
-              <p class="meta">
-                <span class="tag">Contemporary</span>
-                <span class="tag">Downtown</span>
-                <span class="tag">Free / Ticketed</span>
-              </p>
-              <p class="card-desc">Large-scale contemporary exhibitions across the city.</p>
-              <a class="btn btn-small" href="https://torontobiennial.org/" target="_blank" rel="noopener noreferrer">More about the event →</a>
-            </div>
-
-            <div class="event-media" aria-hidden="true">
-              <div class="poster-placeholder">POSTER</div>
-            </div>
-          </article>
-
-          <article class="card event-card alt" data-type="installation">
-            <div class="event-date">
-              <span class="date-num">12</span>
-              <span class="date-mon">apr</span>
-            </div>
-
-            <div class="event-body">
-              <h3 class="card-title">MOCA — New Installations</h3>
-              <p class="meta">
-                <span class="tag">Installation</span>
-                <span class="tag">Junction Triangle</span>
-                <span class="tag">Museum</span>
-              </p>
-              <p class="card-desc">Rotating installations and contemporary programming.</p>
-              <a class="btn btn-small" href="https://moca.ca/" target="_blank" rel="noopener noreferrer">More about the event →</a>
-            </div>
-
-            <div class="event-media" aria-hidden="true">
-              <div class="poster-placeholder">POSTER</div>
-            </div>
-          </article>
-
-          <article class="card event-card" data-type="contemporary">
-            <div class="event-date">
-              <span class="date-num">26 - 29</span>
-              <span class="date-mon">mar</span>
-            </div>
-
-            <div class="event-body">
-              <h3 class="card-title">Artist Project 2026</h3>
-              <p class="meta">
-                <span class="tag">Contemporary</span>
-                <span class="tag">Downtown</span>
-                <span class="tag">Ticketed</span>
-              </p>
-              <p class="card-desc">
-                Discover original works of art from over 200 independent artists from across Canada.
-                Meet and buy art directly from the artists and support the next generation of Canadian artists.
-              </p>
-              <a class="btn btn-small" href="https://theartistproject.com/home/" target="_blank" rel="noopener noreferrer">More about the event →</a>
-            </div>
-
-            <div class="event-media" aria-hidden="true">
-              <div class="poster-placeholder">POSTER</div>
-            </div>
-          </article>
-        </div>
+        <div id="upcoming-exhibitions" class="cards"></div>
       </div>
     </section>
 
@@ -213,29 +162,13 @@
       <div class="container">
         <h2 class="section-title">Archive</h2>
 
-        <ul class="archive">
-          <li class="archive-item">
-            <span class="archive-year">2025</span>
-            <span class="archive-title">Nuit Blanche Toronto</span>
-            <span class="archive-type">Citywide / Night event</span>
-          </li>
-          <li class="archive-item">
-            <span class="archive-year">2024</span>
-            <span class="archive-title">Toronto Biennial of Art</span>
-            <span class="archive-type">Contemporary / Multi-venue</span>
-          </li>
-          <li class="archive-item">
-            <span class="archive-year">2023</span>
-            <span class="archive-title">Harbourfront Summer Shows</span>
-            <span class="archive-type">Festival / Waterfront</span>
-          </li>
-        </ul>
+        <ul id="archive-list" class="archive"></ul>
       </div>
     </section>
 
     <section id="peers" class="section section-acid">
       <div class="container">
-        <h2 class="section-title">Peers Chat (Prototype)</h2>
+        <h2 class="section-title">Peers Chat</h2>
 
         <div class="cards">
           <article class="card peer-card">
@@ -249,18 +182,20 @@
           </article>
         </div>
 
-        <form class="peer-form">
+        <div id="peer-chat-messages" class="peer-messages" aria-live="polite"></div>
+
+        <form class="peer-form" id="peer-chat-form">
           <label class="field">
             <span>Name</span>
-            <input type="text" placeholder="Your name" />
+            <input id="peer-name" type="text" placeholder="Your name" />
           </label>
 
           <label class="field">
-            <span>Note</span>
-            <textarea rows="3" placeholder="Write a quick tip..."></textarea>
+            <span>Message</span>
+            <textarea id="peer-message" rows="3" placeholder="Write a quick tip..."></textarea>
           </label>
 
-          <button class="btn btn-primary" type="button">Submit (demo)</button>
+          <button class="btn btn-primary" type="submit">Add message</button>
         </form>
       </div>
     </section>
@@ -269,7 +204,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <p>Art Tourism Toronto — Site in progress</p>
-      <a class="link" href="#top">Back to top ↑</a>
+      <a class="link" href="#map-entry">Back to map ↑</a>
     </div>
   </footer>
 </body>

@@ -1,44 +1,84 @@
-/* -----------------------------
-   EXHIBITION FILTER CHIPS
------------------------------ */
-const chips = document.querySelectorAll(".chip");
-const events = document.querySelectorAll(".event-card");
+const exhibitionItems = [
+  {
+    id: "toronto-biennial-2026",
+    name: "Toronto Biennial of Art 2026",
+    category: "contemporary",
+    area: "Downtown",
+    format: "Free / Ticketed",
+    description: "Large-scale contemporary exhibitions across the city.",
+    link: "https://torontobiennial.org/",
+    startDate: "2026-03-26",
+    endDate: "2026-06-21",
+    posterLabel: "Citywide Biennial",
+    posterTone: "cyan"
+  },
+  {
+    id: "moca-installations-2026",
+    name: "MOCA - New Installations",
+    category: "installation",
+    area: "Junction Triangle",
+    format: "Museum",
+    description: "Rotating installations and contemporary programming.",
+    link: "https://moca.ca/",
+    startDate: "2026-04-12",
+    endDate: "2026-08-30",
+    posterLabel: "MOCA Program",
+    posterTone: "acid"
+  },
+  {
+    id: "artist-project-2026",
+    name: "Artist Project 2026",
+    category: "contemporary",
+    area: "Downtown",
+    format: "Ticketed",
+    description: "Discover original works from over 200 independent artists from across Canada.",
+    link: "https://theartistproject.com/home/",
+    startDate: "2026-03-26",
+    endDate: "2026-03-29",
+    posterLabel: "Artist Fair",
+    posterTone: "violet"
+  },
+  {
+    id: "nuit-blanche-2025",
+    name: "Nuit Blanche Toronto",
+    category: "contemporary",
+    area: "Citywide",
+    format: "Night event",
+    description: "All-night installations and citywide public art interventions.",
+    link: "https://www.toronto.ca/explore-enjoy/festivals-events/nuitblanche/",
+    startDate: "2025-10-04",
+    endDate: "2025-10-05",
+    posterLabel: "Night Route",
+    posterTone: "hot"
+  },
+  {
+    id: "toronto-biennial-2024",
+    name: "Toronto Biennial of Art",
+    category: "contemporary",
+    area: "Multi-venue",
+    format: "Archive",
+    description: "A previous citywide edition focused on multi-site contemporary commissions.",
+    link: "https://torontobiennial.org/",
+    startDate: "2024-09-21",
+    endDate: "2024-12-01",
+    posterLabel: "Biennial 2024",
+    posterTone: "cyan"
+  },
+  {
+    id: "harbourfront-summer-shows-2023",
+    name: "Harbourfront Summer Shows",
+    category: "installation",
+    area: "Waterfront",
+    format: "Festival",
+    description: "Seasonal waterfront exhibitions and outdoor programming.",
+    link: "https://harbourfrontcentre.com/",
+    startDate: "2023-06-10",
+    endDate: "2023-08-27",
+    posterLabel: "Summer Series",
+    posterTone: "acid"
+  }
+];
 
-chips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    chips.forEach((c) => c.classList.remove("active"));
-    chip.classList.add("active");
-
-    const filter = chip.dataset.filter;
-
-    events.forEach((event) => {
-      if (filter === "all") {
-        event.style.display = "grid";
-      } else {
-        event.style.display = event.dataset.type === filter ? "grid" : "none";
-      }
-    });
-  });
-});
-
-/* -----------------------------
-   HERO BUTTON SMOOTH SCROLL
------------------------------ */
-const exploreBtn = document.querySelector(".hero-actions .btn-primary");
-
-if (exploreBtn) {
-  exploreBtn.addEventListener("click", function (e) {
-    e.preventDefault();
-    const target = document.querySelector("#exhibitions");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-  });
-}
-
-/* -----------------------------
-   MAP DATA
------------------------------ */
 const places = [
   {
     name: "Art Gallery of Ontario",
@@ -132,17 +172,181 @@ const places = [
   }
 ];
 
-/* -----------------------------
-   MAP STATE
------------------------------ */
+const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const CHAT_STORAGE_KEY = "art-tourism-peer-chat";
 let map;
 let markers = [];
 let currentFilteredPlaces = [];
 let resultsExpanded = false;
+let activeExhibitionFilter = "all";
 
-/* -----------------------------
-   CUSTOM ICONS
------------------------------ */
+function parseDate(value) {
+  return new Date(`${value}T00:00:00`);
+}
+
+function getToday() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function formatDisplayDate(startDate, endDate) {
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  const sameMonth = start.getMonth() === end.getMonth();
+  const sameDay = start.getTime() === end.getTime();
+
+  if (sameDay) {
+    return {
+      day: String(start.getDate()),
+      month: MONTH_NAMES[start.getMonth()]
+    };
+  }
+
+  if (sameMonth) {
+    return {
+      day: `${start.getDate()} - ${end.getDate()}`,
+      month: MONTH_NAMES[start.getMonth()]
+    };
+  }
+
+  return {
+    day: `${start.getDate()} ${MONTH_NAMES[start.getMonth()]}`,
+    month: `${end.getDate()} ${MONTH_NAMES[end.getMonth()]}`
+  };
+}
+
+function createPosterMarkup(item) {
+  const year = parseDate(item.startDate).getFullYear();
+
+  return `
+    <a
+      class="poster-placeholder poster-tone-${item.posterTone}"
+      href="${item.link}"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Open poster link for ${escapeHtml(item.name)}"
+    >
+      <span class="poster-art" aria-hidden="true">
+        <span class="poster-stamp">Poster</span>
+        <span class="poster-title">${escapeHtml(item.posterLabel)}</span>
+        <span class="poster-year">${year}</span>
+      </span>
+    </a>
+  `;
+}
+
+function renderExhibitions() {
+  const container = document.getElementById("upcoming-exhibitions");
+  if (!container) return;
+
+  const today = getToday();
+  const upcoming = exhibitionItems
+    .filter((item) => parseDate(item.endDate) >= today)
+    .filter((item) => activeExhibitionFilter === "all" || item.category === activeExhibitionFilter)
+    .sort((a, b) => parseDate(a.startDate) - parseDate(b.startDate));
+
+  if (upcoming.length === 0) {
+    container.innerHTML = `
+      <article class="card event-card event-card-empty">
+        <div class="event-body">
+          <h3 class="card-title">No exhibitions in this filter</h3>
+          <p class="card-desc">Try another category or browse the archive below.</p>
+        </div>
+      </article>
+    `;
+    return;
+  }
+
+  container.innerHTML = upcoming
+    .map((item, index) => {
+      const displayDate = formatDisplayDate(item.startDate, item.endDate);
+      const altClass = index % 2 === 1 ? " alt" : "";
+
+      return `
+        <article class="card event-card${altClass}" data-type="${item.category}">
+          <div class="event-date">
+            <span class="date-num">${displayDate.day}</span>
+            <span class="date-mon">${displayDate.month}</span>
+          </div>
+
+          <div class="event-body">
+            <h3 class="card-title">${escapeHtml(item.name)}</h3>
+            <p class="meta">
+              <span class="tag">${capitalize(item.category)}</span>
+              <span class="tag">${escapeHtml(item.area)}</span>
+              <span class="tag">${escapeHtml(item.format)}</span>
+            </p>
+            <p class="card-desc">${escapeHtml(item.description)}</p>
+            <a class="btn btn-small" href="${item.link}" target="_blank" rel="noopener noreferrer">More about the event →</a>
+          </div>
+
+          <div class="event-media">
+            ${createPosterMarkup(item)}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderArchive() {
+  const container = document.getElementById("archive-list");
+  if (!container) return;
+
+  const today = getToday();
+  const archived = exhibitionItems
+    .filter((item) => parseDate(item.endDate) < today)
+    .sort((a, b) => parseDate(b.endDate) - parseDate(a.endDate));
+
+  container.innerHTML = archived
+    .map((item) => `
+      <li class="archive-item">
+        <span class="archive-year">${parseDate(item.endDate).getFullYear()}</span>
+        <span class="archive-title">${escapeHtml(item.name)}</span>
+        <span class="archive-type">${capitalize(item.category)} / ${escapeHtml(item.area)}</span>
+      </li>
+    `)
+    .join("");
+}
+
+function initExhibitionFilters() {
+  const chips = document.querySelectorAll(".chip");
+  if (chips.length === 0) return;
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      chips.forEach((item) => item.classList.remove("active"));
+      chip.classList.add("active");
+      activeExhibitionFilter = chip.dataset.filter || "all";
+      renderExhibitions();
+    });
+  });
+}
+
+function initPrimaryActions() {
+  const exploreBtn = document.querySelector(".hero-actions .btn-primary");
+  if (!exploreBtn) return;
+
+  exploreBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.querySelector("#exhibitions")?.scrollIntoView({ behavior: "smooth" });
+  });
+}
+
 function createCustomIcon(type) {
   return L.divIcon({
     className: "",
@@ -166,9 +370,6 @@ function setActiveMarker(placeName) {
   });
 }
 
-/* -----------------------------
-   INIT MAP
------------------------------ */
 function initLeafletMap() {
   const mapElement = document.getElementById("map");
   if (!mapElement || typeof L === "undefined") return;
@@ -195,21 +396,18 @@ function initLeafletMap() {
   setupResultsToggle();
   updateMapAndList(places);
 
-  setTimeout(() => {
+  window.setTimeout(() => {
     map.invalidateSize();
   }, 100);
 }
 
-/* -----------------------------
-   MAP UI
------------------------------ */
 function setupMapUI() {
   const mapChips = document.querySelectorAll(".map-chip");
   const searchInput = document.getElementById("map-search");
 
   mapChips.forEach((chip) => {
     chip.addEventListener("click", () => {
-      mapChips.forEach((c) => c.classList.remove("active"));
+      mapChips.forEach((item) => item.classList.remove("active"));
       chip.classList.add("active");
       applyMapFilters();
     });
@@ -250,13 +448,9 @@ function updateResultsCollapseState(totalItems) {
   }
 }
 
-/* -----------------------------
-   FILTERS
------------------------------ */
 function applyMapFilters() {
   const activeChip = document.querySelector(".map-chip.active");
   const currentFilter = activeChip ? activeChip.dataset.mapFilter : "all";
-
   const searchInput = document.getElementById("map-search");
   const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
@@ -277,9 +471,6 @@ function applyMapFilters() {
   updateMapAndList(filteredPlaces, searchTerm);
 }
 
-/* -----------------------------
-   RENDER MAP + LIST
------------------------------ */
 function updateMapAndList(filteredPlaces, searchTerm = "") {
   currentFilteredPlaces = filteredPlaces;
   clearMarkers();
@@ -303,9 +494,9 @@ function updateMapAndList(filteredPlaces, searchTerm = "") {
       .addTo(map)
       .bindPopup(`
         <div style="max-width:220px;">
-          <h3>${place.name}</h3>
-          <p><strong>${capitalize(place.type)}</strong> · ${place.area}</p>
-          <p>${place.description}</p>
+          <h3>${escapeHtml(place.name)}</h3>
+          <p><strong>${capitalize(place.type)}</strong> · ${escapeHtml(place.area)}</p>
+          <p>${escapeHtml(place.description)}</p>
           <a href="${place.link}" target="_blank" rel="noopener noreferrer">Visit website →</a>
         </div>
       `);
@@ -329,53 +520,46 @@ function updateMapAndList(filteredPlaces, searchTerm = "") {
   }
 }
 
-/* -----------------------------
-   CLEAR MARKERS
------------------------------ */
 function clearMarkers() {
   if (!map) return;
   markers.forEach((item) => map.removeLayer(item.marker));
   markers = [];
 }
 
-/* -----------------------------
-   RESULTS LIST
------------------------------ */
 function renderMapResults(items, searchTerm = "") {
   const results = document.getElementById("map-results");
   if (!results) return;
 
   if (items.length === 0) {
-    results.innerHTML = `<p>No museums or exhibitions found.</p>`;
+    results.innerHTML = `<p class="map-empty-state">No museums or exhibitions found.</p>`;
     return;
   }
 
-  results.innerHTML = items.map((item) => {
-    const hasSearchMatch = searchTerm.length > 0;
-    return `
-      <article class="map-result-card ${hasSearchMatch ? "is-match" : ""}" data-place-name="${item.name}">
-        <h3 class="map-result-title">${item.name}</h3>
-        <p class="map-result-meta">${capitalize(item.type)} · ${item.area} · ${capitalize(item.price)}</p>
-        <p class="map-result-desc">${item.description}</p>
-        <a class="map-result-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
-          Visit website →
-        </a>
-      </article>
-    `;
-  }).join("");
+  results.innerHTML = items
+    .map((item) => {
+      const hasSearchMatch = searchTerm.length > 0;
+      return `
+        <article class="map-result-card ${hasSearchMatch ? "is-match" : ""}" data-place-name="${item.name}">
+          <h3 class="map-result-title">${escapeHtml(item.name)}</h3>
+          <p class="map-result-meta">${capitalize(item.type)} · ${escapeHtml(item.area)} · ${capitalize(item.price)}</p>
+          <p class="map-result-desc">${escapeHtml(item.description)}</p>
+          <a class="map-result-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
+            Visit website →
+          </a>
+        </article>
+      `;
+    })
+    .join("");
 
   attachResultCardEvents();
 }
 
-/* -----------------------------
-   RESULT CARD EVENTS
------------------------------ */
 function attachResultCardEvents() {
   const cards = document.querySelectorAll(".map-result-card");
 
   cards.forEach((card) => {
-    card.addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return;
 
       const placeName = card.dataset.placeName;
       const place = currentFilteredPlaces.find((item) => item.name === placeName);
@@ -416,9 +600,91 @@ function highlightSelectedCard(placeName) {
   });
 }
 
-/* -----------------------------
-   ABOUT PAGE BLOB REVEAL
------------------------------ */
+function initPeerChat() {
+  const form = document.getElementById("peer-chat-form");
+  const nameInput = document.getElementById("peer-name");
+  const messageInput = document.getElementById("peer-message");
+  const container = document.getElementById("peer-chat-messages");
+  if (!form || !nameInput || !messageInput || !container) return;
+
+  let storedMessages = loadChatMessages();
+  renderChatMessages(storedMessages);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+    const author = nameInput.value.trim() || "Guest";
+    if (!message) return;
+
+    const nextMessages = [
+      ...storedMessages,
+      {
+        author,
+        message,
+        createdAt: new Date().toISOString()
+      }
+    ].slice(-12);
+
+    storedMessages = nextMessages;
+    saveChatMessages(nextMessages);
+    renderChatMessages(nextMessages);
+    messageInput.value = "";
+    messageInput.focus();
+  });
+}
+
+function loadChatMessages() {
+  try {
+    const raw = window.localStorage.getItem(CHAT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveChatMessages(messages) {
+  window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+}
+
+function renderChatMessages(messages) {
+  const container = document.getElementById("peer-chat-messages");
+  if (!container) return;
+
+  if (messages.length === 0) {
+    container.innerHTML = `
+      <article class="peer-message peer-message-empty">
+        <p class="peer-message-body">No messages yet. Add a quick tip, route idea, or note for the next visitor.</p>
+      </article>
+    `;
+    return;
+  }
+
+  container.innerHTML = messages
+    .map((item) => `
+      <article class="peer-message">
+        <div class="peer-message-head">
+          <strong class="peer-message-author">${escapeHtml(item.author)}</strong>
+          <span class="peer-message-time">${new Date(item.createdAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" })}</span>
+        </div>
+        <p class="peer-message-body">${escapeHtml(item.message)}</p>
+      </article>
+    `)
+    .join("");
+}
+
+function initHeaderShrink() {
+  const header = document.querySelector(".site-header");
+  if (!header) return;
+
+  function updateHeaderState() {
+    header.classList.toggle("is-condensed", window.scrollY > 48);
+  }
+
+  updateHeaderState();
+  window.addEventListener("scroll", updateHeaderState, { passive: true });
+}
+
 function initAboutSmoke() {
   const reveal = document.getElementById("aboutReveal");
   const noise = document.getElementById("smokeNoise");
@@ -442,29 +708,29 @@ function initAboutSmoke() {
     targetY = Math.max(0, Math.min(100, y));
   }
 
-  function onMove(e) {
+  function onMove(event) {
     active = true;
-    pointerToViewBox(e.clientX, e.clientY);
+    pointerToViewBox(event.clientX, event.clientY);
   }
 
-  function onTouchMove(e) {
-    const touch = e.touches[0];
+  function onTouchMove(event) {
+    const touch = event.touches[0];
     if (!touch) return;
     active = true;
     pointerToViewBox(touch.clientX, touch.clientY);
   }
 
-  function onWindowPointerMove(e) {
+  function onWindowPointerMove(event) {
     const rect = reveal.getBoundingClientRect();
-    const withinX = e.clientX >= rect.left && e.clientX <= rect.right;
-    const withinY = e.clientY >= rect.top && e.clientY <= rect.bottom;
+    const withinX = event.clientX >= rect.left && event.clientX <= rect.right;
+    const withinY = event.clientY >= rect.top && event.clientY <= rect.bottom;
 
     if (!withinX || !withinY) {
       active = false;
       return;
     }
 
-    onMove(e);
+    onMove(event);
   }
 
   reveal.addEventListener("pointerenter", onMove);
@@ -479,15 +745,15 @@ function initAboutSmoke() {
     active = false;
   });
 
-  function setEllipse(el, cx, cy, rx, ry) {
-    el.setAttribute("cx", cx.toFixed(2));
-    el.setAttribute("cy", cy.toFixed(2));
-    el.setAttribute("rx", rx.toFixed(2));
-    el.setAttribute("ry", ry.toFixed(2));
+  function setEllipse(element, cx, cy, rx, ry) {
+    element.setAttribute("cx", cx.toFixed(2));
+    element.setAttribute("cy", cy.toFixed(2));
+    element.setAttribute("rx", rx.toFixed(2));
+    element.setAttribute("ry", ry.toFixed(2));
   }
 
   function animate(now) {
-    const t = now * 0.001;
+    const time = now * 0.001;
 
     currentX += (targetX - currentX) * (active ? 0.16 : 0.08);
     currentY += (targetY - currentY) * (active ? 0.16 : 0.08);
@@ -495,10 +761,10 @@ function initAboutSmoke() {
     const isMobile = window.innerWidth < 700;
     const base = active ? (isMobile ? 10.5 : 12.8) : (isMobile ? 7.2 : 8.4);
 
-    const wobbleA = Math.sin(t * 2.1);
-    const wobbleB = Math.cos(t * 1.7);
-    const wobbleC = Math.sin(t * 1.3 + 1.2);
-    const wobbleD = Math.cos(t * 1.9 + 0.8);
+    const wobbleA = Math.sin(time * 2.1);
+    const wobbleB = Math.cos(time * 1.7);
+    const wobbleC = Math.sin(time * 1.3 + 1.2);
+    const wobbleD = Math.cos(time * 1.9 + 0.8);
 
     setEllipse(blobs[0], currentX, currentY, base + wobbleA * 0.9, base * 0.82 + wobbleB * 0.7);
     setEllipse(blobs[1], currentX + 3.5 + wobbleB * 1.8, currentY - 2.2 + wobbleC * 1.5, base * 0.9, base * 0.68);
@@ -507,11 +773,11 @@ function initAboutSmoke() {
     setEllipse(blobs[4], currentX + 6.0 + wobbleA * 1.6, currentY + 1.0 + wobbleD * 1.6, base * 0.6, base * 0.5);
     setEllipse(blobs[5], currentX - 5.8 + wobbleB * 1.5, currentY - 4.1 + wobbleC * 1.3, base * 0.64, base * 0.5);
 
-    const freqX = 0.012 + Math.sin(t * 0.65) * 0.0022;
-    const freqY = 0.021 + Math.cos(t * 0.78) * 0.0031;
+    const freqX = 0.012 + Math.sin(time * 0.65) * 0.0022;
+    const freqY = 0.021 + Math.cos(time * 0.78) * 0.0031;
     noise.setAttribute("baseFrequency", `${freqX.toFixed(4)} ${freqY.toFixed(4)}`);
 
-    const scale = active ? 30 + Math.sin(t * 1.6) * 3 : 18 + Math.sin(t * 1.2) * 2;
+    const scale = active ? 30 + Math.sin(time * 1.6) * 3 : 18 + Math.sin(time * 1.2) * 2;
     displace.setAttribute("scale", scale.toFixed(2));
 
     rafId = requestAnimationFrame(animate);
@@ -522,22 +788,19 @@ function initAboutSmoke() {
   window.addEventListener("beforeunload", () => {
     if (rafId) cancelAnimationFrame(rafId);
   });
+
   window.addEventListener("pointerleave", () => {
     active = false;
   });
 }
 
-/* -----------------------------
-   HELPERS
------------------------------ */
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-/* -----------------------------
-   START
------------------------------ */
 window.addEventListener("load", () => {
+  renderExhibitions();
+  renderArchive();
+  initExhibitionFilters();
+  initPrimaryActions();
   initLeafletMap();
+  initPeerChat();
+  initHeaderShrink();
   initAboutSmoke();
 });
