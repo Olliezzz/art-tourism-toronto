@@ -30,7 +30,19 @@
         </a>
       </div>
 
-      <nav class="nav" aria-label="Primary">
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Toggle navigation"
+      >
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+
+      <nav class="nav" id="primary-nav" aria-label="Primary">
         <a href="about.html" class="nav-link">About</a>
         <a href="#exhibitions" class="nav-link">Exhibitions</a>
         <a href="#museums" class="nav-link">Museums</a>

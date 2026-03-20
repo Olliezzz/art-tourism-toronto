@@ -675,14 +675,48 @@ function renderChatMessages(messages) {
 
 function initHeaderShrink() {
   const header = document.querySelector(".site-header");
+  const navToggle = document.querySelector(".nav-toggle");
+  const navLinks = document.querySelectorAll(".nav .nav-link");
   if (!header) return;
+
+  function closeMenu() {
+    header.classList.remove("is-menu-open");
+    if (navToggle) {
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+  }
 
   function updateHeaderState() {
     header.classList.toggle("is-condensed", window.scrollY > 48);
+
+    if (window.innerWidth < 768 && window.scrollY > 12) {
+      closeMenu();
+    }
+
+    if (window.innerWidth >= 768) {
+      closeMenu();
+    }
   }
+
+  if (navToggle) {
+    navToggle.addEventListener("click", () => {
+      const nextExpanded = navToggle.getAttribute("aria-expanded") !== "true";
+      header.classList.toggle("is-menu-open", nextExpanded);
+      navToggle.setAttribute("aria-expanded", String(nextExpanded));
+    });
+  }
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth < 768) {
+        closeMenu();
+      }
+    });
+  });
 
   updateHeaderState();
   window.addEventListener("scroll", updateHeaderState, { passive: true });
+  window.addEventListener("resize", updateHeaderState);
 }
 
 function initAboutSmoke() {

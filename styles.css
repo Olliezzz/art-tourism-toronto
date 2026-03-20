@@ -115,6 +115,28 @@ img{
   align-items: center;
 }
 
+.nav-toggle{
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 4px 4px 0 rgba(18,18,34,0.72);
+  cursor: pointer;
+}
+
+.nav-toggle-bar{
+  display: block;
+  width: 20px;
+  height: 2px;
+  margin: 3px 0;
+  background: var(--ink);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
 .nav-link{
   display: inline-flex;
   align-items: center;
@@ -149,6 +171,18 @@ img{
 
 .site-header.is-condensed .nav-link{
   min-height: 36px;
+}
+
+.site-header.is-menu-open .nav-toggle-bar:nth-child(1){
+  transform: translateY(8px) rotate(45deg);
+}
+
+.site-header.is-menu-open .nav-toggle-bar:nth-child(2){
+  opacity: 0;
+}
+
+.site-header.is-menu-open .nav-toggle-bar:nth-child(3){
+  transform: translateY(-8px) rotate(-45deg);
 }
 
 /* HERO */
@@ -1250,7 +1284,99 @@ textarea{
   }
 }
 
+@media (max-width: 767px){
+  #map-entry,
+  .section{
+    scroll-margin-top: 78px;
+  }
+
+  .site-header{
+    position: sticky;
+    top: 0;
+  }
+
+  .header-grid{
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-items: stretch;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .brand-link{
+    gap: 2px;
+  }
+
+  .brand-title{
+    font-size: 22px;
+    line-height: 0.95;
+  }
+
+  .brand-subtitle{
+    margin-top: 1px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-toggle{
+    display: inline-flex;
+    align-self: center;
+  }
+
+  .nav{
+    display: none;
+    grid-column: 1 / -1;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 0 2px;
+  }
+
+  .site-header.is-menu-open .nav{
+    display: grid;
+  }
+
+  .nav-link{
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.14);
+  }
+
+  .site-header.is-condensed .header-grid{
+    padding: 6px 0;
+    gap: 8px;
+  }
+
+  .site-header.is-condensed .brand-title{
+    font-size: 17px;
+  }
+
+  .site-header.is-condensed .brand-subtitle{
+    font-size: 10px;
+    margin-top: 0;
+  }
+
+  .site-header.is-condensed .nav-toggle{
+    width: 38px;
+    height: 38px;
+    box-shadow: 2px 2px 0 rgba(18,18,34,0.56);
+  }
+
+  .site-header.is-condensed .nav-link{
+    min-height: 36px;
+    font-size: 13px;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1024px){
+  .site-header.is-condensed .header-grid{
+    padding: 12px 0;
+  }
+
+  .site-header.is-condensed .brand-title{
+    font-size: 25px;
+  }
+
   .nav{
     gap: 12px 16px;
   }
@@ -1286,12 +1412,8 @@ textarea{
     padding: 14px 0 34px;
   }
 
-  .nav{
-    gap: 10px 12px;
-  }
-
-  .nav-link{
-    min-height: 42px;
+  .site-header.is-menu-open .nav{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   #map{
@@ -1318,24 +1440,8 @@ textarea{
     width: min(1400px, calc(100vw - 24px));
   }
 
-  .header-grid{
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 16px 0;
-  }
-
-  .nav{
-    display: grid;
+  .site-header.is-menu-open .nav{
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    width: 100%;
-  }
-
-  .nav-link{
-    justify-content: center;
-    min-height: 42px;
-    padding: 8px 10px;
-    border: 2px solid rgba(255,255,255,0.18);
   }
 
   #map{
@@ -1409,12 +1515,6 @@ textarea{
     margin-bottom: 14px;
   }
 
-  .header-grid{
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 14px 0;
-  }
-
   .brand-title{
     font-size: 24px;
   }
@@ -1423,19 +1523,17 @@ textarea{
     font-size: 14px;
   }
 
-  .nav{
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    width: 100%;
+  .site-header.is-menu-open .nav{
+    grid-template-columns: 1fr;
   }
 
-  .nav-link{
-    justify-content: center;
-    min-height: 42px;
-    padding: 8px;
-    font-size: 13px;
-    border: 2px solid rgba(255,255,255,0.18);
+  .site-header.is-condensed .brand-title{
+    font-size: 16px;
+  }
+
+  .site-header.is-condensed .nav-toggle{
+    width: 36px;
+    height: 36px;
   }
 
   .hero{
@@ -1602,5 +1700,9 @@ textarea{
 
   .nav-link:hover{
     border-bottom-color: transparent;
+  }
+
+  .nav-toggle:hover{
+    box-shadow: 4px 4px 0 rgba(18,18,34,0.72);
   }
 }
