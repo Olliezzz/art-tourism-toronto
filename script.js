@@ -417,7 +417,7 @@ function highlightSelectedCard(placeName) {
 }
 
 /* -----------------------------
-   ABOUT PAGE SMOKE REVEAL
+   ABOUT PAGE BLOB REVEAL
 ----------------------------- */
 function initAboutSmoke() {
   const reveal = document.getElementById("aboutReveal");
