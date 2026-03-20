@@ -7,8 +7,8 @@ const exhibitionItems = [
     format: "Free / Ticketed",
     description: "Large-scale contemporary exhibitions across the city.",
     link: "https://torontobiennial.org/",
-    startDate: "2026-03-26",
-    endDate: "2026-06-21",
+    startDate: "2026-09-26",
+    endDate: "2026-12-20",
     posterLabel: "Citywide Biennial",
     posterTone: "cyan"
   },
@@ -20,8 +20,8 @@ const exhibitionItems = [
     format: "Museum",
     description: "Rotating installations and contemporary programming.",
     link: "https://moca.ca/",
-    startDate: "2026-04-12",
-    endDate: "2026-08-30",
+    startDate: "2026-10-19",
+    endDate: "2027-03-22",
     posterLabel: "MOCA Program",
     posterTone: "acid"
   },
@@ -34,7 +34,7 @@ const exhibitionItems = [
     description: "Discover original works from over 200 independent artists from across Canada.",
     link: "https://theartistproject.com/home/",
     startDate: "2026-03-26",
-    endDate: "2026-03-29",
+    endDate: "2026-03-26",
     posterLabel: "Artist Fair",
     posterTone: "violet"
   },
@@ -241,7 +241,7 @@ function createPosterMarkup(item) {
       aria-label="Open poster link for ${escapeHtml(item.name)}"
     >
       <span class="poster-art" aria-hidden="true">
-        <span class="poster-stamp">Poster</span>
+        <span class="poster-stamp"></span>
         <span class="poster-title">${escapeHtml(item.posterLabel)}</span>
         <span class="poster-year">${year}</span>
       </span>
